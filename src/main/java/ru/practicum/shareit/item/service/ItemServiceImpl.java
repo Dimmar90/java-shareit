@@ -67,7 +67,7 @@ public class ItemServiceImpl implements ItemService {
         if (userRepository.find(ownerId).isPresent()) {
             ArrayList<ItemDto> userItems = new ArrayList<>();
             for (Long id : itemRepository.findUserItemsIds(ownerId)) {
-                if (itemRepository.find(id).isPresent()){
+                if (itemRepository.find(id).isPresent()) {
                     ItemDto item = mapper.toItemDto(itemRepository.find(id).get());
                     userItems.add(item);
                 }

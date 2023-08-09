@@ -1,7 +1,6 @@
 package ru.practicum.shareit.request;
 
 import lombok.Data;
-import org.apache.coyote.Request;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
