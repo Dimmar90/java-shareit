@@ -13,7 +13,7 @@ import ru.practicum.shareit.item.service.ItemService;
 @RequestMapping("/items")
 public class ItemController {
 
-    private ItemService itemService;
+    private final ItemService itemService;
 
     public ItemController(ItemService itemService) {
         this.itemService = itemService;
@@ -21,8 +21,7 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<?> add(@RequestHeader("X-Sharer-User-Id") Long ownerId, @RequestBody Item item) {
-        itemService.addNewItem(ownerId, item);
-        return new ResponseEntity<>(item, HttpStatus.CREATED);
+        return new ResponseEntity<>(itemService.addItem(ownerId, item), HttpStatus.CREATED);
     }
 
     @PatchMapping("/{id}")
@@ -41,7 +40,7 @@ public class ItemController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam(value = "text") String text) {
-        return new ResponseEntity<>(itemService.searchItem(text), HttpStatus.OK);
+    public ResponseEntity<?> search(@RequestParam(value = "text") String searchingText) {
+        return new ResponseEntity<>(itemService.searchItem(searchingText), HttpStatus.OK);
     }
 }

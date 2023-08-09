@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.AlreadyExistException;
-import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import java.util.Collection;
@@ -51,7 +50,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public Optional<Collection<User>> findAll() {
-        return Optional.ofNullable(users.values());
+        return Optional.of(users.values());
     }
 
     @Override
@@ -59,7 +58,7 @@ public class UserRepositoryImpl implements UserRepository {
         emails.remove(users.get(id).getEmail());
         users.remove(id);
     }
-    
+
     public void updateUserEmail(User user, Long id) {
         if (user.getEmail() != null && !user.getEmail().equals(users.get(id).getEmail())) {
             emails.remove(users.get(id).getEmail());

@@ -16,9 +16,9 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class ItemServiceImpl implements ItemService {
-    private ItemRepository itemRepository;
-    private UserRepository userRepository;
-    private ItemMapper mapper;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final ItemMapper mapper;
 
     public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemMapper mapper) {
         this.itemRepository = itemRepository;
@@ -27,16 +27,17 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public void addNewItem(Long ownerId, Item item) {
+    public Item addItem(Long ownerId, Item item) {
         checkItem(ownerId, item);
         item.setOwner(ownerId);
         itemRepository.add(item);
         log.info("Добавлена вещь: {}", item);
+        return item;
     }
 
     @Override
     public Item updateItem(Long ownerId, Long id, Item item) {
-        if (Objects.equals(itemRepository.find(id).get().getOwner(), ownerId)) {
+        if (itemRepository.find(id).isPresent() && Objects.equals(itemRepository.find(id).get().getOwner(), ownerId)) {
             Item itemToUpdate = itemRepository.find(id).get();
             checkUpdatedItem(itemToUpdate, item);
             itemRepository.update(itemToUpdate);
@@ -66,8 +67,10 @@ public class ItemServiceImpl implements ItemService {
         if (userRepository.find(ownerId).isPresent()) {
             ArrayList<ItemDto> userItems = new ArrayList<>();
             for (Long id : itemRepository.findUserItemsIds(ownerId)) {
-                ItemDto item = mapper.toItemDto(itemRepository.find(id).get());
-                userItems.add(item);
+                if (itemRepository.find(id).isPresent()){
+                    ItemDto item = mapper.toItemDto(itemRepository.find(id).get());
+                    userItems.add(item);
+                }
             }
             log.info("Список вещей пользователя : {}", userItems);
             return userItems;
@@ -80,12 +83,10 @@ public class ItemServiceImpl implements ItemService {
 
     public ArrayList<ItemDto> searchItem(String searchingText) {
         ArrayList<ItemDto> searchingItems = new ArrayList<>();
-
         if (searchingText.isEmpty()) {
-            log.info("Отсутствует запрос на поиск вещи", searchingText);
+            log.info("Отсутствует запрос на поиск вещи");
             return searchingItems;
         }
-
         if (itemRepository.findItemsBySearch(searchingText).isPresent()) {
             for (Item item : itemRepository.findItemsBySearch(searchingText).get()) {
                 ItemDto searchingItem = mapper.toItemDto(item);
@@ -93,7 +94,6 @@ public class ItemServiceImpl implements ItemService {
             }
             log.info("Найденные вещи по запросу {} : {}", searchingText, searchingItems);
         }
-
         return searchingItems;
     }
 

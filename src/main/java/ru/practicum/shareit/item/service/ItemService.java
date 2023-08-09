@@ -6,7 +6,7 @@ import ru.practicum.shareit.item.model.Item;
 import java.util.ArrayList;
 
 public interface ItemService {
-    void addNewItem(Long id, Item item);
+    Item addItem(Long id, Item item);
 
     Item updateItem(Long ownerId, Long id, Item item);
 

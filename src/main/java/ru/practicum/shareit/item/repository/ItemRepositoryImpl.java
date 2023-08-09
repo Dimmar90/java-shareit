@@ -2,19 +2,17 @@ package ru.practicum.shareit.item.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 
 @Repository
 @Slf4j
 public class ItemRepositoryImpl implements ItemRepository {
-    private Map<Long, Item> items;
-    private Map<Long, ArrayList<Long>> userItemsIds;
+    private final Map<Long, Item> items;
+    private final Map<Long, ArrayList<Long>> userItemsIds;
     private Long id;
 
     public ItemRepositoryImpl(Map<Long, Item> items, Map<Long, ArrayList<Long>> userItemsIds) {
@@ -31,7 +29,7 @@ public class ItemRepositoryImpl implements ItemRepository {
             item.setId(++id);
         }
         items.put(item.getId(), item);
-        if (!userItemsIds.keySet().contains(item.getOwner())) {
+        if (!userItemsIds.containsKey(item.getOwner())) {
             ArrayList<Long> itemsId = new ArrayList<>();
             userItemsIds.put(item.getOwner(), itemsId);
             userItemsIds.get(item.getOwner()).add(item.getId());
@@ -65,6 +63,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                 searchingItems.add(item);
             }
         }
-        return Optional.ofNullable(searchingItems);
+        return Optional.of(searchingItems);
     }
 }
