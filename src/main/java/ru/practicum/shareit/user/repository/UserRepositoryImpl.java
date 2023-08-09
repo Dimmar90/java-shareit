@@ -3,10 +3,13 @@ package ru.practicum.shareit.user.repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.AlreadyExistException;
-import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Repository
@@ -22,12 +25,6 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void add(User user) {
-        if (user.getEmail() == null) {
-            String message = "Отсутствует email";
-            log.error(message);
-            throw new NotFoundException(message);
-        }
-        checkUserEmail(user.getEmail());
         if (users.isEmpty()) {
             id = 1L;
             user.setId(id);
@@ -35,24 +32,16 @@ public class UserRepositoryImpl implements UserRepository {
             user.setId(++id);
         }
         users.put(user.getId(), user);
-        log.info("Добавлен: {}", user);
     }
 
     @Override
     public void update(User user, Long id) {
-        if (users.containsKey(id)) {
-            updateUserEmail(user, id);
-            user.setId(id);
-            if (user.getName() == null) {
-                user.setName(users.get(id).getName());
-            }
-            users.put(id, user);
-            log.info("Обновлен: {}", user);
-        } else {
-            String message = "Id не найден";
-            log.error(message);
-            throw new NotFoundException(message);
+        updateUserEmail(user, id);
+        user.setId(id);
+        if (user.getName() == null) {
+            user.setName(users.get(id).getName());
         }
+        users.put(id, user);
     }
 
     @Override
@@ -67,15 +56,10 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public void delete(Long id) {
-        if (users.containsKey(id)) {
-            log.info("Удален: {}", users.get(id));
-            emails.remove(users.get(id).getEmail());
-            users.remove(id);
-        } else {
-            throw new NotFoundException("Id: " + id + " не найден");
-        }
+        emails.remove(users.get(id).getEmail());
+        users.remove(id);
     }
-
+    
     public void updateUserEmail(User user, Long id) {
         if (user.getEmail() != null && !user.getEmail().equals(users.get(id).getEmail())) {
             emails.remove(users.get(id).getEmail());

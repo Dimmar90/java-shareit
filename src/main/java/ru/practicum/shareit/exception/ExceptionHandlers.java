@@ -17,9 +17,15 @@ public class ExceptionHandlers {
         return Map.of("error", e.getMessage());
     }
 
-    @ExceptionHandler({NotFoundException.class})
+    @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleBadRequest(final RuntimeException e) {
+        return Map.of("error", e.getMessage());
+    }
+
+    @ExceptionHandler({NotFoundException.class})
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleNotFound(final RuntimeException e) {
         return Map.of("error", e.getMessage());
     }
 }
