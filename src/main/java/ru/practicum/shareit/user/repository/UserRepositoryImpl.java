@@ -5,10 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.AlreadyExistException;
 import ru.practicum.shareit.user.User;
 
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Slf4j
 @Repository
@@ -49,8 +46,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public Optional<Collection<User>> findAll() {
-        return Optional.of(users.values());
+    public List<User> findAll() {
+        return users.values().stream().toList() ;
     }
 
     @Override

@@ -1,10 +1,12 @@
 package ru.practicum.shareit.item;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * TODO Sprint add-controllers.
@@ -21,26 +23,26 @@ public class ItemController {
 
     @PostMapping
     public ResponseEntity<?> add(@RequestHeader("X-Sharer-User-Id") Long ownerId, @RequestBody Item item) {
-        return new ResponseEntity<>(itemService.addItem(ownerId, item), HttpStatus.CREATED);
+        return new ResponseEntity<>(itemService.addItem(ownerId, item), CREATED);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@RequestHeader("X-Sharer-User-Id") Long ownerId, @PathVariable("id") Long id, @RequestBody Item item) {
-        return new ResponseEntity<>(itemService.updateItem(ownerId, id, item), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.updateItem(ownerId, id, item), OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getItem(@RequestHeader("X-Sharer-User-Id") Long ownerId, @PathVariable("id") Long id) {
-        return new ResponseEntity<>(itemService.getItem(ownerId, id), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.getItem(ownerId, id), OK);
     }
 
     @GetMapping
     public ResponseEntity<?> getUserItems(@RequestHeader("X-Sharer-User-Id") Long ownerId) {
-        return new ResponseEntity<>(itemService.getUserItems(ownerId), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.getUserItems(ownerId), OK);
     }
 
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam(value = "text") String searchingText) {
-        return new ResponseEntity<>(itemService.searchItem(searchingText), HttpStatus.OK);
+        return new ResponseEntity<>(itemService.searchItem(searchingText), OK);
     }
 }

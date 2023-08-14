@@ -5,14 +5,11 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
-import java.util.Optional;
-
-import static java.util.stream.Collectors.toList;
 
 @Slf4j
 @Service
@@ -38,49 +35,31 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void update(User user, Long id) {
-        if (userRepository.find(id).isPresent()) {
-            userRepository.update(user, id);
-            log.info("Обновлен пользователь: {}", user);
-        } else {
-            String message = "Пользователь не найден";
-            log.error(message);
-            throw new NotFoundException(message);
-        }
+    public void update(User userUpdated, Long id) {
+        User user = userRepository.find(id).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
+        userRepository.update(userUpdated, id);
+        log.info("Обновлен пользователь: {}", user);
     }
 
     @Override
-    public Optional<UserDto> getUser(Long id) {
-        if (userRepository.find(id).isPresent()) {
-            UserDto user = mapper.toUserDto(userRepository.find(id).get());
-            log.info("Найден пользователь: {}", user);
-            return Optional.ofNullable(user);
-        } else {
-            String message = "Пользователь не найден";
-            log.error(message);
-            throw new NotFoundException(message);
-        }
+    public UserDto getUser(Long id) {
+        User user = userRepository.find(id).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
+        UserDto userDto = mapper.toUserDto(user);
+        log.info("Найден пользователь: {}", userDto);
+        return userDto;
     }
 
     @Override
     public List<UserDto> getAllUsers() {
-        if (userRepository.findAll().isPresent()) {
-            log.info("Найдены все пользователи");
-            return userRepository.findAll().get().stream().map(mapper::toUserDto).collect(toList());
-        } else {
-            String message = "Пользователи не найдены";
-            log.error(message);
-            throw new NotFoundException(message);
-        }
+        List<UserDto> allUsers = userRepository.findAll().stream().map(mapper::toUserDto).toList();
+        log.info("Найдены все пользователи: {}", allUsers);
+        return allUsers;
     }
 
     @Override
     public void delete(Long id) {
-        if (userRepository.find(id).isPresent()) {
-            log.info("Удален пользователь: {}", userRepository.find(id));
-            userRepository.delete(id);
-        } else {
-            throw new NotFoundException("Id пользователя: " + id + " не найден");
-        }
+        User user = userRepository.find(id).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
+        log.info("Удален пользователь: {}", user);
+        userRepository.delete(id);
     }
 }

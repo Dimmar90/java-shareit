@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -49,13 +50,13 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public ArrayList<Long> findUserItemsIds(Long ownerId) {
+    public List<Long> findUserItemsIds(Long ownerId) {
         return userItemsIds.get(ownerId);
     }
 
     @Override
-    public Optional<ArrayList<Item>> findItemsBySearch(String searchingText) {
-        ArrayList<Item> searchingItems = new ArrayList<>();
+    public List<Item> findItemsBySearch(String searchingText) {
+        List<Item> searchingItems = new ArrayList<>();
         for (Item item : items.values()) {
             if (item.getName().toLowerCase().contains(searchingText.toLowerCase())
                     || item.getDescription().toLowerCase().contains(searchingText.toLowerCase())
@@ -63,6 +64,6 @@ public class ItemRepositoryImpl implements ItemRepository {
                 searchingItems.add(item);
             }
         }
-        return Optional.of(searchingItems);
+        return searchingItems;
     }
 }

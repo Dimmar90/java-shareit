@@ -3,7 +3,7 @@ package ru.practicum.shareit.user.repository;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.user.User;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -15,7 +15,7 @@ public interface UserRepository {
 
     Optional<User> find(Long id);
 
-    Optional<Collection<User>> findAll();
+    List<User> findAll();
 
     void updateUserEmail(User user, Long id);
 

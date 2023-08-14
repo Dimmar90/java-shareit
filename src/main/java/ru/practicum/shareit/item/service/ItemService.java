@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.service;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface ItemService {
     Item addItem(Long id, Item item);
@@ -12,7 +12,7 @@ public interface ItemService {
 
     ItemDto getItem(Long ownerId, Long id);
 
-    ArrayList<ItemDto> getUserItems(Long ownerId);
+    List<ItemDto> getUserItems(Long ownerId);
 
-    ArrayList<ItemDto> searchItem(String text);
+    List<ItemDto> searchItem(String text);
 }

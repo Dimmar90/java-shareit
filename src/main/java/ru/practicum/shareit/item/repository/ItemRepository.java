@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.repository;
 
 import ru.practicum.shareit.item.model.Item;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public interface ItemRepository {
@@ -13,7 +13,7 @@ public interface ItemRepository {
 
     Optional<Item> find(Long id);
 
-    ArrayList<Long> findUserItemsIds(Long ownerId);
+    List<Long> findUserItemsIds(Long ownerId);
 
-    Optional<ArrayList<Item>> findItemsBySearch(String text);
+    List<Item> findItemsBySearch(String text);
 }
