@@ -6,7 +6,6 @@ import ru.practicum.shareit.exception.AlreadyExistException;
 import ru.practicum.shareit.user.User;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
