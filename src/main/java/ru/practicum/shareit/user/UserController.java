@@ -1,7 +1,13 @@
 package ru.practicum.shareit.user;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.user.service.UserService;
+
+import javax.validation.Valid;
+
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 /**
  * TODO Sprint add-controllers.
@@ -9,4 +15,37 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/users")
 public class UserController {
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PostMapping
+    public ResponseEntity<?> create(@RequestBody @Valid User user) {
+        userService.create(user);
+        return new ResponseEntity<>(user, CREATED);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<?> update(@RequestBody @Valid User user, @PathVariable("id") Long id) {
+        userService.update(user, id);
+        return new ResponseEntity<>(user, OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUser(@PathVariable("id") Long id) {
+        return new ResponseEntity<>(userService.getUser(id), OK);
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getAllUsers() {
+        return new ResponseEntity<>(userService.getAllUsers(), OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable("id") Long id) {
+        userService.delete(id);
+        return new ResponseEntity<>(OK);
+    }
 }
