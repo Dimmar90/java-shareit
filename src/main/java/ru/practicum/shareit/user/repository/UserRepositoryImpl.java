@@ -6,6 +6,7 @@ import ru.practicum.shareit.exception.AlreadyExistException;
 import ru.practicum.shareit.user.User;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Repository
@@ -47,7 +48,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     @Override
     public List<User> findAll() {
-        return users.values().stream().toList() ;
+        return new ArrayList<>(users.values());
     }
 
     @Override

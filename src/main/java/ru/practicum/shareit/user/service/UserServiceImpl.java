@@ -11,6 +11,8 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 
+import static java.util.stream.Collectors.toList;
+
 @Slf4j
 @Service
 public class UserServiceImpl implements UserService {
@@ -51,7 +53,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<UserDto> allUsers = userRepository.findAll().stream().map(mapper::toUserDto).toList();
+        List<UserDto> allUsers = userRepository.findAll().stream().map(mapper::toUserDto).collect(toList());
         log.info("Найдены все пользователи: {}", allUsers);
         return allUsers;
     }
