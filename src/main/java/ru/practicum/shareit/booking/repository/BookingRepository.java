@@ -29,7 +29,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking as b where b.bookerId = ?1 and b.status = 'REJECTED' order by b.start desc")
     List<Booking> findRejectedBookingById(Long bookerId);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 and b.start < CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b where b.bookerId = ?1 and b.end < CURRENT_TIMESTAMP()  order by b.start desc")
     List<Booking> findPastBookingById(Long bookerId);
 
     @Query("select b from Booking as b where b.bookerId = ?1 and b.start < CURRENT_TIMESTAMP() and b.end > CURRENT_TIMESTAMP() order by b.start desc")
@@ -50,7 +50,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and b.status = 'REJECTED' order by b.start desc")
     List<Booking> findRejectedBookingByOwnerId(Long ownerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and  b.start < CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and  b.end < CURRENT_TIMESTAMP() order by b.start desc")
     List<Booking> findPastBookingByOwnerId(Long ownerId);
 
     @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and  b.start < CURRENT_TIMESTAMP() and b.end > CURRENT_TIMESTAMP() order by b.start desc")
