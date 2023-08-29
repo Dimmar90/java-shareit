@@ -1,25 +1,28 @@
 package ru.practicum.shareit.user.repository;
 
-import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import ru.practicum.shareit.user.User;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
 import java.util.Optional;
 
-@Repository
-public interface UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
+    Optional<User> findById(Long id);
 
-    void add(User user);
+    @Modifying
+    @Query("update User u set u.name = ?1 where u.id = ?2")
+    void updateName(String name, Long id);
 
-    void update(User user, Long id);
+    @Modifying
+    @Query("update User u set u.email = ?1 where u.id = ?2")
+    void updateEmail(String name, Long id);
 
-    Optional<User> find(Long id);
+    @Query("select name from User where id = ?1")
+    String findNameById(Long id);
 
-    List<User> findAll();
+    @Query("select email from User where id = ?1")
+    String findEmailById(Long id);
 
-    void updateUserEmail(User user, Long id);
-
-    void delete(Long id);
-
-    void checkUserEmail(String email);
+    void deleteById(Long id);
 }

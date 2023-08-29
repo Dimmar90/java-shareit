@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
@@ -11,42 +12,58 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@Transactional
 @Slf4j
 public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
+    private final BookingRepository bookingRepository;
     private final ItemMapper mapper;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, ItemMapper mapper) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, ItemMapper mapper) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
+        this.bookingRepository = bookingRepository;
         this.mapper = mapper;
     }
 
     @Override
     public Item addItem(Long ownerId, Item item) {
-        User user = userRepository.find(ownerId)
-                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
+        User user = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         validateItem(item);
         item.setOwner(ownerId);
-        itemRepository.add(item);
+        itemRepository.save(item);
         log.info("Добавлена вещь: {}", item);
         return item;
     }
 
     @Override
-    public Item updateItem(Long ownerId, Long id, Item item) {
-        if (itemRepository.find(id).isPresent() && Objects.equals(itemRepository.find(id).get().getOwner(), ownerId)) {
-            Item itemToUpdate = itemRepository.find(id).get();
-            updatedItemFields(itemToUpdate, item);
-            itemRepository.update(itemToUpdate);
-            log.info("Обновлена вещь: {}", itemToUpdate);
-            return itemToUpdate;
+    public Item updateItem(Long ownerId, Long id, Item updatedItem) {
+        if (itemRepository.findById(id).isPresent() && Objects.equals(itemRepository.findOwnerById(id), ownerId)) {
+            updatedItem.setId(id);
+            if (updatedItem.getName() != null) {
+                itemRepository.updateName(updatedItem.getName(), id);
+            } else {
+                updatedItem.setName(itemRepository.findNameById(id));
+            }
+            if (updatedItem.getDescription() != null) {
+                itemRepository.updateDescription(updatedItem.getDescription(), id);
+            } else {
+                updatedItem.setDescription(itemRepository.findDescriptionById(id));
+            }
+            if (updatedItem.getAvailable() != null) {
+                itemRepository.updateAvailable(updatedItem.getAvailable(), id);
+            } else {
+                updatedItem.setAvailable(itemRepository.findAvailableById(id));
+            }
+            log.info("Обновлена вещь: {}", updatedItem);
+            return updatedItem;
         } else {
             String message = "У пользователя нет доступа к обновлению вещи";
             log.error(message);
@@ -56,18 +73,21 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(Long ownerId, Long id) {
-        Item item = itemRepository.find(id).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + id));
+        Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + id));
+        item.setLastBooking(bookingRepository.findFirstByItemIdAndItemOwnerOrderByStart(id, ownerId));
+        item.setNextBooking(bookingRepository.findFirstByItemIdAndItemOwnerOrderByStartDesc(id, ownerId));
         log.info("Найденная вещь: {}", mapper.toItemDto(item));
         return mapper.toItemDto(item);
     }
 
+
     @Override
     public List<ItemDto> getUserItems(Long ownerId) {
-        User user = userRepository.find(ownerId)
-                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
+        User user = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         List<ItemDto> userItems = new ArrayList<>();
-        for (Long id : itemRepository.findUserItemsIds(ownerId)) {
-            Item item = itemRepository.find(id).get();
+        for (Long id : itemRepository.findIdByOwner(ownerId)) {
+            Item item = itemRepository.findById(id).get();
+            item.setLastBooking(bookingRepository.findFirstByItemIdAndItemOwnerOrderByStart(id, ownerId));
             ItemDto itemDto = mapper.toItemDto(item);
             userItems.add(itemDto);
         }
@@ -82,7 +102,7 @@ public class ItemServiceImpl implements ItemService {
             log.info("Отсутствует запрос на поиск вещи");
             return searchingItems;
         }
-        for (Item item : itemRepository.findItemsBySearch(searchingText)) {
+        for (Item item : itemRepository.searchItemByNameOrDescription(searchingText.toLowerCase())) {
             ItemDto searchingItem = mapper.toItemDto(item);
             searchingItems.add(searchingItem);
         }
@@ -105,18 +125,6 @@ public class ItemServiceImpl implements ItemService {
             String message = "Описание вещи не найдено";
             log.warn(message);
             throw new BadRequestException(message);
-        }
-    }
-
-    private void updatedItemFields(Item itemToUpdate, Item item) {
-        if (item.getName() != null) {
-            itemToUpdate.setName(item.getName());
-        }
-        if (item.getDescription() != null) {
-            itemToUpdate.setDescription(item.getDescription());
-        }
-        if (item.getAvailable() != null) {
-            itemToUpdate.setAvailable(item.getAvailable());
         }
     }
 }

@@ -23,14 +23,12 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<?> create(@RequestBody @Valid User user) {
-        userService.create(user);
-        return new ResponseEntity<>(user, CREATED);
+        return new ResponseEntity<>(userService.create(user), CREATED);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> update(@RequestBody @Valid User user, @PathVariable("id") Long id) {
-        userService.update(user, id);
-        return new ResponseEntity<>(user, OK);
+        return new ResponseEntity<>(userService.update(user, id), OK);
     }
 
     @GetMapping("/{id}")
