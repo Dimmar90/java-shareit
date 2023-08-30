@@ -77,9 +77,9 @@ public class ItemServiceImpl implements ItemService {
         if (!bookingRepository.findLastBooking(id, ownerId).isEmpty()) {
             item.setLastBooking(bookingRepository.findLastBooking(id, ownerId).get(0));
         }
-//        if (!bookingRepository.findNextBooking(id, ownerId).isEmpty()) {
-//            item.setLastBooking(bookingRepository.findNextBooking(id, ownerId).get(0));
-//        }
+        if (!bookingRepository.findNextBooking(id, ownerId).isEmpty()) {
+            item.setNextBooking(bookingRepository.findNextBooking(id, ownerId).get(0));
+        }
         log.info("Найденная вещь: {}", mapper.toItemDto(item));
         return mapper.toItemDto(item);
     }
@@ -94,9 +94,9 @@ public class ItemServiceImpl implements ItemService {
             if (!bookingRepository.findLastBooking(id, ownerId).isEmpty()) {
                 item.setLastBooking(bookingRepository.findLastBooking(id, ownerId).get(0));
             }
-//            if (!bookingRepository.findNextBooking(id, ownerId).isEmpty()) {
-//                item.setLastBooking(bookingRepository.findNextBooking(id, ownerId).get(0));
-//            }
+            if (!bookingRepository.findNextBooking(id, ownerId).isEmpty()) {
+                item.setNextBooking(bookingRepository.findNextBooking(id, ownerId).get(0));
+            }
             ItemDto itemDto = mapper.toItemDto(item);
             userItems.add(itemDto);
         }
