@@ -59,9 +59,13 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and  b.start > CURRENT_TIMESTAMP() order by b.start desc")
     List<Booking> findFutureBookingByOwnerId(Long bookerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.id = ?1 and b.itemOwner = ?2 and b.start < CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.id = ?1 and b.itemOwner = ?2 and b.start < CURRENT_TIMESTAMP() and b.status != 'REJECTED' " +
+            "order by b.start desc")
     List<Booking> findLastBooking(Long itemId, Long itemOwner);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.id = ?1 and b.itemOwner = ?2 and b.start > CURRENT_TIMESTAMP() order by b.start")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.id = ?1 and b.itemOwner = ?2 and b.start > CURRENT_TIMESTAMP() and b.status != 'REJECTED' " +
+            "order by b.start")
     List<Booking> findNextBooking(Long itemId, Long itemOwner);
 }
