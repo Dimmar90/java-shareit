@@ -75,7 +75,6 @@ public class ItemServiceImpl implements ItemService {
     public ItemDto getItem(Long ownerId, Long id) {
         Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + id));
         item.setLastBooking(bookingRepository.findFirstByItemIdAndItemOwnerOrderByStart(id, ownerId));
-        item.setNextBooking(bookingRepository.findFirstByItemIdAndItemOwnerOrderByStartDesc(id, ownerId));
         log.info("Найденная вещь: {}", mapper.toItemDto(item));
         return mapper.toItemDto(item);
     }
