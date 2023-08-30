@@ -60,5 +60,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     List<Booking> findFutureBookingByOwnerId(Long bookerId);
 
     @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.id = ?1 and b.itemOwner = ?2 and b.end < CURRENT_TIMESTAMP() order by b.end")
-    List<Booking> findFirstByItemIdAndItemOwnerWhereEndBeforeNowOrderByIdDesc(Long itemId, Long itemOwner);
+    List<Booking> findLastBooking(Long itemId, Long itemOwner);
 }
