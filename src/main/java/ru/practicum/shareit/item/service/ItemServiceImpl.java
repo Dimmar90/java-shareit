@@ -74,7 +74,7 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(Long ownerId, Long id) {
         Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + id));
-        item.setLastBooking(bookingRepository.findFirstByItemIdAndItemOwnerWhereEndBeforeNowOrderByIdDesc(id, ownerId));
+        item.setLastBooking(bookingRepository.findFirstByItemIdAndItemOwnerWhereEndBeforeNowOrderByIdDesc(id, ownerId).get(0));
         log.info("Найденная вещь: {}", mapper.toItemDto(item));
         return mapper.toItemDto(item);
     }
@@ -86,7 +86,7 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDto> userItems = new ArrayList<>();
         for (Long id : itemRepository.findIdByOwner(ownerId)) {
             Item item = itemRepository.findById(id).get();
-            item.setLastBooking(bookingRepository.findFirstByItemIdAndItemOwnerWhereEndBeforeNowOrderByIdDesc(id, ownerId));
+            item.setLastBooking(bookingRepository.findFirstByItemIdAndItemOwnerWhereEndBeforeNowOrderByIdDesc(id, ownerId).get(0));
             ItemDto itemDto = mapper.toItemDto(item);
             userItems.add(itemDto);
         }
