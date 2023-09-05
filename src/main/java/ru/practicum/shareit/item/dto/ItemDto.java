@@ -18,7 +18,6 @@ public class ItemDto {
     private Long requestId;
     private Booking lastBooking;
     private Booking nextBooking;
-
     private ArrayList<Comment> comments;
 
     public ItemDto(Long id, String name, String description, Boolean available, Long requestId, Booking lastBooking, Booking nextBooking, ArrayList<Comment> comments) {

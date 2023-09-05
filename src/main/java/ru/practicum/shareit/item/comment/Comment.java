@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -17,7 +17,7 @@ public class Comment {
     @Column(name = "author")
     private String authorName;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private LocalDateTime created;
+    private Date created;
     @Column(name = "item_id")
     private Long itemId;
 }

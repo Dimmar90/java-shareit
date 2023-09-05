@@ -159,7 +159,7 @@ public class ItemServiceImpl implements ItemService {
         }
         if (bookingRepository.countUserBookingsOfItem(userId, itemId) != 0) {
             comment.setAuthorName(user.getName());
-            comment.setCreated(LocalDateTime.now());
+            comment.setCreated(new java.util.Date());
             comment.setItemId(itemId);
             commentRepository.save(comment);
             return comment;
