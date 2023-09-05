@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import javax.transaction.Transactional;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -155,6 +156,7 @@ public class ItemServiceImpl implements ItemService {
         }
         if (bookingRepository.countUserBookingsOfItem(userId, itemId) != 0) {
             comment.setAuthorName(user.getName());
+            comment.setCreated(LocalDateTime.now());
             commentRepository.save(comment);
             return comment;
         } else {
