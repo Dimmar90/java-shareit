@@ -5,5 +5,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.ArrayList;
 
 public interface CommentRepository extends JpaRepository<Comment, Long> {
-    ArrayList<Comment> findCommentById(Long id);
+    ArrayList<Comment> findCommentByItemId(Long id);
 }

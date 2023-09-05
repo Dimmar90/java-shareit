@@ -89,7 +89,7 @@ public class ItemServiceImpl implements ItemService {
                 && bookingRepository.findNextItemBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
             item.setNextBooking(bookingRepository.findNextItemBooking(id, ownerId).get(0));
         }
-        item.setComments(commentRepository.findCommentById(id));
+        item.setComments(commentRepository.findCommentByItemId(id));
         log.info("Найденная вещь: {}", mapper.toItemDto(item));
         return mapper.toItemDto(item);
     }
@@ -108,7 +108,7 @@ public class ItemServiceImpl implements ItemService {
                     && bookingRepository.findNextItemBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
                 item.setNextBooking(bookingRepository.findNextItemBooking(id, ownerId).get(0));
             }
-            item.setComments(commentRepository.findCommentById(id));
+            item.setComments(commentRepository.findCommentByItemId(id));
             ItemDto itemDto = mapper.toItemDto(item);
             userItems.add(itemDto);
         }
@@ -124,7 +124,7 @@ public class ItemServiceImpl implements ItemService {
             return searchingItems;
         }
         for (Item item : itemRepository.searchItemByNameOrDescription(searchingText.toLowerCase())) {
-            item.setComments(commentRepository.findCommentById(item.getId()));
+            item.setComments(commentRepository.findCommentByItemId(item.getId()));
             ItemDto searchingItem = mapper.toItemDto(item);
             searchingItems.add(searchingItem);
         }
