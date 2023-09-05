@@ -14,7 +14,8 @@ public class ItemMapper {
                 item.getAvailable(),
                 item.getRequestId() != null ? item.getRequestId() : null,
                 item.getLastBooking(),
-                item.getNextBooking()
+                item.getNextBooking(),
+                item.getComments()
         );
     }
 }

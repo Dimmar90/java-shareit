@@ -37,5 +37,6 @@ create TABLE IF NOT EXISTS comments (
   text VARCHAR(500),
   author VARCHAR(100),
   created TIMESTAMP,
+  item_id BIGINT NOT NULL,
   CONSTRAINT pk_comment PRIMARY KEY (id)
 );

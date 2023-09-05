@@ -18,4 +18,6 @@ public class Comment {
     private String authorName;
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime created;
+    @Column(name = "item_id")
+    private Long itemId;
 }
