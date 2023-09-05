@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.model;
 
 import lombok.Data;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.item.comment.Comment;
 
 import javax.persistence.*;
 
@@ -24,4 +25,6 @@ public class Item {
     private Booking lastBooking;
     @Transient
     private Booking nextBooking;
+//    @Transient
+//    private Comment comment;
 }

@@ -6,6 +6,8 @@ import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.comment.Comment;
+import ru.practicum.shareit.item.comment.CommentRepository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
@@ -25,12 +27,15 @@ public class ItemServiceImpl implements ItemService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
     private final BookingRepository bookingRepository;
+    private final CommentRepository commentRepository;
     private final ItemMapper mapper;
 
-    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository, BookingRepository bookingRepository, ItemMapper mapper) {
+    public ItemServiceImpl(ItemRepository itemRepository, UserRepository userRepository,
+                           BookingRepository bookingRepository, CommentRepository commentRepository, ItemMapper mapper) {
         this.itemRepository = itemRepository;
         this.userRepository = userRepository;
         this.bookingRepository = bookingRepository;
+        this.commentRepository = commentRepository;
         this.mapper = mapper;
     }
 
@@ -75,18 +80,17 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public ItemDto getItem(Long ownerId, Long id) {
         Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + id));
-        if (!bookingRepository.findLastBooking(id, ownerId).isEmpty()
-                && bookingRepository.findLastBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
-            item.setLastBooking(bookingRepository.findLastBooking(id, ownerId).get(0));
+        if (!bookingRepository.findLastItemBooking(id, ownerId).isEmpty()
+                && bookingRepository.findLastItemBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
+            item.setLastBooking(bookingRepository.findLastItemBooking(id, ownerId).get(0));
         }
-        if (!bookingRepository.findNextBooking(id, ownerId).isEmpty()
-                && bookingRepository.findNextBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
-            item.setNextBooking(bookingRepository.findNextBooking(id, ownerId).get(0));
+        if (!bookingRepository.findNextItemBooking(id, ownerId).isEmpty()
+                && bookingRepository.findNextItemBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
+            item.setNextBooking(bookingRepository.findNextItemBooking(id, ownerId).get(0));
         }
         log.info("Найденная вещь: {}", mapper.toItemDto(item));
         return mapper.toItemDto(item);
     }
-
 
     @Override
     public List<ItemDto> getUserItems(Long ownerId) {
@@ -94,13 +98,13 @@ public class ItemServiceImpl implements ItemService {
         List<ItemDto> userItems = new ArrayList<>();
         for (Long id : itemRepository.findIdByOwner(ownerId)) {
             Item item = itemRepository.findById(id).get();
-            if (!bookingRepository.findLastBooking(id, ownerId).isEmpty()
-                    && bookingRepository.findLastBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
-                item.setLastBooking(bookingRepository.findLastBooking(id, ownerId).get(0));
+            if (!bookingRepository.findLastItemBooking(id, ownerId).isEmpty()
+                    && bookingRepository.findLastItemBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
+                item.setLastBooking(bookingRepository.findLastItemBooking(id, ownerId).get(0));
             }
-            if (!bookingRepository.findNextBooking(id, ownerId).isEmpty()
-                    && bookingRepository.findNextBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
-                item.setNextBooking(bookingRepository.findNextBooking(id, ownerId).get(0));
+            if (!bookingRepository.findNextItemBooking(id, ownerId).isEmpty()
+                    && bookingRepository.findNextItemBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
+                item.setNextBooking(bookingRepository.findNextItemBooking(id, ownerId).get(0));
             }
             ItemDto itemDto = mapper.toItemDto(item);
             userItems.add(itemDto);
@@ -139,6 +143,22 @@ public class ItemServiceImpl implements ItemService {
             String message = "Описание вещи не найдено";
             log.warn(message);
             throw new BadRequestException(message);
+        }
+    }
+
+    @Override
+    public Comment addComment(Long userId, Long itemId, Comment comment) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + userId));
+        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + itemId));
+        if (comment.getText().isBlank() || comment.getText().isEmpty()) {
+            throw new BadRequestException("Комментарий не может быть пустым");
+        }
+        if (bookingRepository.countUserBookingsOfItem(userId, itemId) != 0) {
+            comment.setAuthorName(user.getName());
+            commentRepository.save(comment);
+            return comment;
+        } else {
+            throw new BadRequestException("Пользователь не может оставить комментарий");
         }
     }
 }

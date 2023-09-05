@@ -12,60 +12,92 @@ import java.util.Optional;
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     @Modifying
-    @Query("update Booking b set b.status = ?1 where b.id = ?2")
+    @Query("update Booking b set b.status = ?1 " +
+            "where b.id = ?2")
     void updateStatus(BookingStatus status, Long id);
 
     Optional<Booking> findBookingById(Long id);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 order by b.start desc")
+    @Query("select b from Booking as b where b.bookerId = ?1 " +
+            "order by b.start desc")
     List<Booking> findBookingByBookerId(Long bookerId);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 and b.status = 'WAITING' order by b.start desc")
+    @Query("select b from Booking as b " +
+            "where b.bookerId = ?1 and b.status = 'WAITING' " +
+            "order by b.start desc")
     List<Booking> findWaitingBookingById(Long bookerId);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 and b.status = 'APPROVED' order by b.start desc")
+    @Query("select b from Booking as b " +
+            "where b.bookerId = ?1 and b.status = 'APPROVED' " +
+            "order by b.start desc")
     List<Booking> findApprovedBookingById(Long bookerId);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 and b.status = 'REJECTED' order by b.start desc")
+    @Query("select b from Booking as b " +
+            "where b.bookerId = ?1 and b.status = 'REJECTED' " +
+            "order by b.start desc")
     List<Booking> findRejectedBookingById(Long bookerId);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 and b.end < CURRENT_TIMESTAMP()  order by b.start desc")
+    @Query("select b from Booking as b " +
+            "where b.bookerId = ?1 and b.end < CURRENT_TIMESTAMP() " +
+            "order by b.start desc")
     List<Booking> findPastBookingById(Long bookerId);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 and b.start < CURRENT_TIMESTAMP() and b.end > CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b " +
+            "where b.bookerId = ?1 and b.start < CURRENT_TIMESTAMP() and b.end > CURRENT_TIMESTAMP() " +
+            "order by b.start desc")
     List<Booking> findCurrentBookingById(Long bookerId);
 
-    @Query("select b from Booking as b where b.bookerId = ?1 and b.start > CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b " +
+            "where b.bookerId = ?1 and b.start > CURRENT_TIMESTAMP() " +
+            "order by b.start desc")
     List<Booking> findFutureBookingById(Long bookerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.owner = ?1 " +
+            "order by b.start desc")
     List<Booking> findBookingByOwnerId(Long ownerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and b.status = 'WAITING' order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.owner = ?1 and b.status = 'WAITING' " +
+            "order by b.start desc")
     List<Booking> findWaitingBookingByOwnerId(Long ownerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and b.status = 'APPROVED' order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.owner = ?1 and b.status = 'APPROVED' " +
+            "order by b.start desc")
     List<Booking> findApprovedBookingByOwnerId(Long ownerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and b.status = 'REJECTED' order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.owner = ?1 and b.status = 'REJECTED' " +
+            "order by b.start desc")
     List<Booking> findRejectedBookingByOwnerId(Long ownerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and  b.end < CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.owner = ?1 and  b.end < CURRENT_TIMESTAMP() " +
+            "order by b.start desc")
     List<Booking> findPastBookingByOwnerId(Long ownerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and  b.start < CURRENT_TIMESTAMP() and b.end > CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.owner = ?1 and  b.start < CURRENT_TIMESTAMP() and b.end > CURRENT_TIMESTAMP() " +
+            "order by b.start desc")
     List<Booking> findCurrentBookingByOwnerId(Long ownerId);
 
-    @Query("select b from Booking as b join Item as i on b.itemId = i.id where i.owner = ?1 and  b.start > CURRENT_TIMESTAMP() order by b.start desc")
+    @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
+            "where i.owner = ?1 and  b.start > CURRENT_TIMESTAMP() " +
+            "order by b.start desc")
     List<Booking> findFutureBookingByOwnerId(Long bookerId);
 
     @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
-            "where i.id = ?1 and b.itemOwner = ?2 and b.start < CURRENT_TIMESTAMP() " +
+            "where i.id = ?1 and b.itemOwner = ?2 and b.start < CURRENT_TIMESTAMP()" +
             "order by b.start desc")
-    List<Booking> findLastBooking(Long itemId, Long itemOwner);
+    List<Booking> findLastItemBooking(Long itemId, Long itemOwner);
 
     @Query("select b from Booking as b join Item as i on b.itemId = i.id " +
             "where i.id = ?1 and b.itemOwner = ?2 and b.start > CURRENT_TIMESTAMP() " +
             "order by b.start")
-    List<Booking> findNextBooking(Long itemId, Long itemOwner);
+    List<Booking> findNextItemBooking(Long itemId, Long itemOwner);
+
+    @Query("select count(b.bookerId) from Booking as b left join User as u on b.bookerId = u.id " +
+            "where u.id = ?1 AND b.itemId = ?2 AND b.start < CURRENT_TIMESTAMP()")
+    int countUserBookingsOfItem(Long userId, Long itemId);
 }

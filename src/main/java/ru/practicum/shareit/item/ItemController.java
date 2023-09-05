@@ -2,6 +2,7 @@ package ru.practicum.shareit.item;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.comment.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -44,5 +45,10 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam(value = "text") String searchingText) {
         return new ResponseEntity<>(itemService.searchItem(searchingText), OK);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<?> addComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") Long itemId, @RequestBody Comment comment){
+        return new ResponseEntity<>(itemService.addComment(userId,itemId, comment), OK);
     }
 }
