@@ -41,8 +41,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item addItem(Long ownerId, Item item) {
-        User user = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         validateItem(item);
+        User user = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         item.setOwner(ownerId);
         itemRepository.save(item);
         log.info("Добавлена вещь: {}", item);
