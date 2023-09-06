@@ -3,6 +3,8 @@ package ru.practicum.shareit.booking.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.exception.BadRequestException;
@@ -27,10 +29,14 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final BookingRepository bookingRepository;
 
-    public BookingServiceImpl(UserRepository userRepository, ItemRepository itemRepository, BookingRepository bookingRepository) {
+    private final BookingMapper mapper;
+
+    public BookingServiceImpl(UserRepository userRepository, ItemRepository itemRepository,
+                              BookingRepository bookingRepository, BookingMapper mapper) {
         this.userRepository = userRepository;
         this.itemRepository = itemRepository;
         this.bookingRepository = bookingRepository;
+        this.mapper = mapper;
     }
 
     public Booking addBooking(Long bookerId, Booking booking) {
@@ -71,13 +77,13 @@ public class BookingServiceImpl implements BookingService {
         return booking;
     }
 
-    public Booking findBooking(Long userId, Long bookingId) {
+    public BookingDto findBooking(Long userId, Long bookingId) {
         Booking booking = bookingRepository.findBookingById(bookingId).orElseThrow(() -> new NotFoundException("Не найдено бронирование id: " + bookingId));
         User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + userId));
         setItemAndBookerToBooking(booking, booking.getBookerId());
         Long ownerId = booking.getItem().getOwner();
         if (Objects.equals(userId, booking.getBookerId()) || Objects.equals(userId, ownerId)) {
-            return booking;
+            return mapper.toBookingDto(booking);
         } else {
             String message = "Нет доступа";
             log.warn(message);
@@ -85,24 +91,27 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public List<Booking> findAllBookerBookings(Long bookerId, String bookingState) {
+    public List<BookingDto> findAllBookerBookings(Long bookerId, String bookingState) {
         User booker = userRepository.findById(bookerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
         List<Booking> bookerBookings = new ArrayList<>();
+        List<BookingDto> bookerBookingsDto = new ArrayList<>();
 
         if (bookingState == null) {
             bookerBookings = bookingRepository.findBookingByBookerId(bookerId);
         } else {
-            bookerBookings = findBookingsByStatus(bookerId, bookingState);
+            bookerBookingsDto = findBookingsByStatus(bookerId, bookingState);
         }
 
         for (int bookerBookingsIndex = 0; bookerBookingsIndex < bookerBookings.size(); bookerBookingsIndex++) {
             setItemAndBookerToBooking(bookerBookings.get(bookerBookingsIndex), bookerId);
+            bookerBookingsDto.add(mapper.toBookingDto(bookerBookings.get(bookerBookingsIndex)));
         }
-        return bookerBookings;
+        return bookerBookingsDto;
     }
 
-    public List<Booking> findBookingsByStatus(Long bookerId, String bookingStatus) {
+    public List<BookingDto> findBookingsByStatus(Long bookerId, String bookingStatus) {
         List<Booking> bookerBookings = new ArrayList<>();
+        List<BookingDto> bookerBookingsDto = new ArrayList<>();
         boolean isStatusSupported = false;
 
         for (BookingStatus state : BookingStatus.values()) {
@@ -141,29 +150,35 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(message);
         }
 
-        return bookerBookings;
+        for (Booking booking : bookerBookings) {
+            bookerBookingsDto.add(mapper.toBookingDto(booking));
+        }
+        return bookerBookingsDto;
     }
 
 
-    public List<Booking> findAllOwnerBookings(Long ownerId, String bookingState) {
+    public List<BookingDto> findAllOwnerBookings(Long ownerId, String bookingState) {
         User owner = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         List<Booking> bookerBookings = new ArrayList<>();
+        List<BookingDto> bookerBookingsDto = new ArrayList<>();
 
         if (bookingState == null) {
             bookerBookings = bookingRepository.findBookingByOwnerId(ownerId);
         } else {
-            bookerBookings = findOwnerBookingsByStatus(ownerId, bookingState);
+            bookerBookingsDto = findOwnerBookingsByStatus(ownerId, bookingState);
         }
 
         for (int bookerBookingsIndex = 0; bookerBookingsIndex < bookerBookings.size(); bookerBookingsIndex++) {
             Long bookerId = bookerBookings.get(bookerBookingsIndex).getBookerId();
             setItemAndBookerToBooking(bookerBookings.get(bookerBookingsIndex), bookerId);
+            bookerBookingsDto.add(mapper.toBookingDto(bookerBookings.get(bookerBookingsIndex)));
         }
-        return bookerBookings;
+        return bookerBookingsDto;
     }
 
-    public List<Booking> findOwnerBookingsByStatus(Long ownerId, String bookingStatus) {
+    public List<BookingDto> findOwnerBookingsByStatus(Long ownerId, String bookingStatus) {
         List<Booking> bookerBookings = new ArrayList<>();
+        List<BookingDto> bookerBookingsDto = new ArrayList<>();
         boolean isStatusSupported = false;
 
         for (BookingStatus state : BookingStatus.values()) {
@@ -202,7 +217,10 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(message);
         }
 
-        return bookerBookings;
+        for (Booking booking : bookerBookings) {
+            bookerBookingsDto.add(mapper.toBookingDto(booking));
+        }
+        return bookerBookingsDto;
     }
 
     public void validateBooking(Long bookerId, Booking booking) {
