@@ -13,11 +13,7 @@ public class BookingMapper {
                 booking.getItem(),
                 booking.getStart(),
                 booking.getEnd(),
-                booking.getStatus(),
-                booking.getBookerId(),
-                booking.getItemId(),
-                booking.getItemName(),
-                booking.getItemOwner()
+                booking.getStatus()
         );
     }
 }
