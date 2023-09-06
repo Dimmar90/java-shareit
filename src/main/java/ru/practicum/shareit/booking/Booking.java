@@ -26,12 +26,10 @@ public class Booking {
     @Transient
     private Item item;
 
-   // @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_booking")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime start;
 
-    //@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_booking")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime end;
