@@ -99,7 +99,7 @@ public class BookingServiceImpl implements BookingService {
         if (bookingState == null) {
             bookerBookings = bookingRepository.findBookingByBookerId(bookerId);
         } else {
-            bookerBookingsDto = findBookingsByStatus(bookerId, bookingState);
+            bookerBookings = findBookingsByStatus(bookerId, bookingState);
         }
 
         for (int bookerBookingsIndex = 0; bookerBookingsIndex < bookerBookings.size(); bookerBookingsIndex++) {
@@ -109,9 +109,8 @@ public class BookingServiceImpl implements BookingService {
         return bookerBookingsDto;
     }
 
-    public List<BookingDto> findBookingsByStatus(Long bookerId, String bookingStatus) {
+    public List<Booking> findBookingsByStatus(Long bookerId, String bookingStatus) {
         List<Booking> bookerBookings = new ArrayList<>();
-        List<BookingDto> bookerBookingsDto = new ArrayList<>();
         boolean isStatusSupported = false;
 
         for (BookingStatus state : BookingStatus.values()) {
@@ -150,10 +149,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException(message);
         }
 
-        for (Booking booking : bookerBookings) {
-            bookerBookingsDto.add(mapper.toBookingDto(booking));
-        }
-        return bookerBookingsDto;
+        return bookerBookings;
     }
 
 
@@ -165,7 +161,7 @@ public class BookingServiceImpl implements BookingService {
         if (bookingState == null) {
             bookerBookings = bookingRepository.findBookingByOwnerId(ownerId);
         } else {
-            bookerBookingsDto = findOwnerBookingsByStatus(ownerId, bookingState);
+            bookerBookings = findOwnerBookingsByStatus(ownerId, bookingState);
         }
 
         for (int bookerBookingsIndex = 0; bookerBookingsIndex < bookerBookings.size(); bookerBookingsIndex++) {
@@ -176,9 +172,8 @@ public class BookingServiceImpl implements BookingService {
         return bookerBookingsDto;
     }
 
-    public List<BookingDto> findOwnerBookingsByStatus(Long ownerId, String bookingStatus) {
+    public List<Booking> findOwnerBookingsByStatus(Long ownerId, String bookingStatus) {
         List<Booking> bookerBookings = new ArrayList<>();
-        List<BookingDto> bookerBookingsDto = new ArrayList<>();
         boolean isStatusSupported = false;
 
         for (BookingStatus state : BookingStatus.values()) {
@@ -216,11 +211,7 @@ public class BookingServiceImpl implements BookingService {
             log.warn(message);
             throw new BadRequestException(message);
         }
-
-        for (Booking booking : bookerBookings) {
-            bookerBookingsDto.add(mapper.toBookingDto(booking));
-        }
-        return bookerBookingsDto;
+        return bookerBookings;
     }
 
     public void validateBooking(Long bookerId, Booking booking) {
@@ -236,12 +227,14 @@ public class BookingServiceImpl implements BookingService {
             log.warn(message);
             throw new BadRequestException(message);
         }
-        LocalDateTime start = booking.getStart().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
-        LocalDateTime end = booking.getEnd().toInstant()
-                .atZone(ZoneId.systemDefault())
-                .toLocalDateTime();
+//        LocalDateTime start = booking.getStart().toInstant()
+//                .atZone(ZoneId.systemDefault())
+//                .toLocalDateTime();
+//        LocalDateTime end = booking.getEnd().toInstant()
+//                .atZone(ZoneId.systemDefault())
+//                .toLocalDateTime();
+        LocalDateTime start = booking.getStart();
+        LocalDateTime end = booking.getEnd();
         if (start.isBefore(LocalDateTime.now()) || end.isBefore(start) || start.equals(end)) {
             String message = "Не верно указаны даты бронирования";
             log.warn(message);

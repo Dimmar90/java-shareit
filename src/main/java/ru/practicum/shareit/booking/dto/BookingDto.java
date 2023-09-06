@@ -5,6 +5,7 @@ import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -15,8 +16,8 @@ public class BookingDto {
     private Long id;
     private User booker;
     private Item item;
-    private Date start;
-    private Date end;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private BookingStatus status;
     private Long bookerId;
     private Long itemId;
@@ -24,7 +25,8 @@ public class BookingDto {
     private Long itemOwner;
 
 
-    public BookingDto(Long id, User booker, Item item, Date start, Date end, BookingStatus status, Long bookerId, Long itemId, String itemName, Long itemOwner) {
+    public BookingDto(Long id, User booker, Item item, LocalDateTime start, LocalDateTime end,
+                      BookingStatus status, Long bookerId, Long itemId, String itemName, Long itemOwner) {
         this.id = id;
         this.booker = booker;
         this.item = item;

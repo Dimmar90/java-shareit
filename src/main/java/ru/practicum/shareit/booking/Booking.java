@@ -7,7 +7,7 @@ import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
  * TODO Sprint add-bookings.
@@ -26,15 +26,15 @@ public class Booking {
     @Transient
     private Item item;
 
-    @Temporal(TemporalType.TIMESTAMP)
+   // @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "start_booking")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date start;
+    private LocalDateTime start;
 
-    @Temporal(TemporalType.TIMESTAMP)
+    //@Temporal(TemporalType.TIMESTAMP)
     @Column(name = "end_booking")
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    private Date end;
+    private LocalDateTime end;
 
     @Enumerated(EnumType.STRING)
     private BookingStatus status;
