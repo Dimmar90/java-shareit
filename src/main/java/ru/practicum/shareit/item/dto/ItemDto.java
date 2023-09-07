@@ -5,6 +5,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.item.comment.Comment;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -18,9 +19,9 @@ public class ItemDto {
     private Long requestId;
     private Booking lastBooking;
     private Booking nextBooking;
-    private ArrayList<Comment> comments;
+    private List<Comment> comments;
 
-    public ItemDto(Long id, String name, String description, Boolean available, Long requestId, Booking lastBooking, Booking nextBooking, ArrayList<Comment> comments) {
+    public ItemDto(Long id, String name, String description, Boolean available, Long requestId, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
         this.id = id;
         this.name = name;
         this.description = description;

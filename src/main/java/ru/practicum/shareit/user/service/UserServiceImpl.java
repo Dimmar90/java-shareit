@@ -40,7 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User update(User userUpdated, Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
         userUpdated.setId(id);
         if (userUpdated.getName() != null) {
             userRepository.updateName(userUpdated.getName(), id);
@@ -58,7 +60,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto getUser(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
+        User user = userRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
         UserDto userDto = mapper.toUserDto(user);
         log.info("Найден пользователь: {}", userDto);
         return userDto;
@@ -66,7 +70,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAllUsers() {
-        List<UserDto> allUsers = userRepository.findAll().stream().map(mapper::toUserDto).collect(toList());
+        List<UserDto> allUsers = userRepository
+                .findAll()
+                .stream()
+                .map(mapper::toUserDto).collect(toList());
         log.info("Найдены все пользователи: {}", allUsers);
         return allUsers;
     }

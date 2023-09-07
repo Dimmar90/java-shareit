@@ -5,7 +5,7 @@ import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.item.comment.Comment;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO Sprint add-controllers.
@@ -27,5 +27,5 @@ public class Item {
     @Transient
     private Booking nextBooking;
     @Transient
-    private ArrayList<Comment> comments;
+    private List<Comment> comments;
 }

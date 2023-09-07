@@ -56,7 +56,9 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public Booking approved(Long sharerId, Long id, Boolean approved) {
-        Booking booking = bookingRepository.findBookingById(id).orElseThrow(() -> new NotFoundException("Не найдено бронирование id: " + id));
+        Booking booking = bookingRepository
+                .findBookingById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдено бронирование id: " + id));
         setItemAndBookerToBooking(booking, booking.getBookerId());
         if (booking.getStatus().equals(BookingStatus.APPROVED)) {
             throw new BadRequestException("Already Approved");
@@ -77,21 +79,27 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public BookingDto findBooking(Long userId, Long bookingId) {
-        Booking booking = bookingRepository.findBookingById(bookingId).orElseThrow(() -> new NotFoundException("Не найдено бронирование id: " + bookingId));
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + userId));
+        Booking booking = bookingRepository
+                .findBookingById(bookingId)
+                .orElseThrow(() -> new NotFoundException("Не найдено бронирование id: " + bookingId));
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + userId));
         setItemAndBookerToBooking(booking, booking.getBookerId());
         Long ownerId = booking.getItem().getOwner();
         if (Objects.equals(userId, booking.getBookerId()) || Objects.equals(userId, ownerId)) {
             return mapper.toBookingDto(booking);
         } else {
-            String message = "Нет доступа";
+            String message = "Пользователь не может найти бронь вещи";
             log.warn(message);
             throw new NotFoundException(message);
         }
     }
 
     public List<BookingDto> findAllBookerBookings(Long bookerId, String bookingState) {
-        User booker = userRepository.findById(bookerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
+        User booker = userRepository
+                .findById(bookerId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
         List<Booking> bookerBookings = new ArrayList<>();
         List<BookingDto> bookerBookingsDto = new ArrayList<>();
 
@@ -101,9 +109,9 @@ public class BookingServiceImpl implements BookingService {
             bookerBookings = findBookingsByStatus(bookerId, bookingState);
         }
 
-        for (int bookerBookingsIndex = 0; bookerBookingsIndex < bookerBookings.size(); bookerBookingsIndex++) {
-            setItemAndBookerToBooking(bookerBookings.get(bookerBookingsIndex), bookerId);
-            bookerBookingsDto.add(mapper.toBookingDto(bookerBookings.get(bookerBookingsIndex)));
+        for (Booking bookerBooking : bookerBookings) {
+            setItemAndBookerToBooking(bookerBooking, bookerId);
+            bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
         }
         return bookerBookingsDto;
     }
@@ -115,6 +123,7 @@ public class BookingServiceImpl implements BookingService {
         for (BookingStatus state : BookingStatus.values()) {
             if (state.name().equals(bookingStatus)) {
                 isStatusSupported = true;
+                break;
             }
         }
 
@@ -153,7 +162,9 @@ public class BookingServiceImpl implements BookingService {
 
 
     public List<BookingDto> findAllOwnerBookings(Long ownerId, String bookingState) {
-        User owner = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
+        User owner = userRepository
+                .findById(ownerId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         List<Booking> bookerBookings = new ArrayList<>();
         List<BookingDto> bookerBookingsDto = new ArrayList<>();
 
@@ -163,10 +174,10 @@ public class BookingServiceImpl implements BookingService {
             bookerBookings = findOwnerBookingsByStatus(ownerId, bookingState);
         }
 
-        for (int bookerBookingsIndex = 0; bookerBookingsIndex < bookerBookings.size(); bookerBookingsIndex++) {
-            Long bookerId = bookerBookings.get(bookerBookingsIndex).getBookerId();
-            setItemAndBookerToBooking(bookerBookings.get(bookerBookingsIndex), bookerId);
-            bookerBookingsDto.add(mapper.toBookingDto(bookerBookings.get(bookerBookingsIndex)));
+        for (Booking bookerBooking : bookerBookings) {
+            Long bookerId = bookerBooking.getBookerId();
+            setItemAndBookerToBooking(bookerBooking, bookerId);
+            bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
         }
         return bookerBookingsDto;
     }
@@ -178,6 +189,7 @@ public class BookingServiceImpl implements BookingService {
         for (BookingStatus state : BookingStatus.values()) {
             if (state.name().equals(bookingStatus)) {
                 isStatusSupported = true;
+                break;
             }
         }
 
@@ -214,8 +226,12 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public void validateBooking(Long bookerId, Booking booking) {
-        User booker = userRepository.findById(bookerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
-        Item item = itemRepository.findById(booking.getItemId()).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + booking.getItemId()));
+        User booker = userRepository
+                .findById(bookerId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
+        Item item = itemRepository
+                .findById(booking.getItemId())
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + booking.getItemId()));
         if (booking.getStart() == null || booking.getEnd() == null) {
             String message = "Не указаны даты бронирования";
             log.warn(message);
@@ -226,12 +242,6 @@ public class BookingServiceImpl implements BookingService {
             log.warn(message);
             throw new BadRequestException(message);
         }
-//        LocalDateTime start = booking.getStart().toInstant()
-//                .atZone(ZoneId.systemDefault())
-//                .toLocalDateTime();
-//        LocalDateTime end = booking.getEnd().toInstant()
-//                .atZone(ZoneId.systemDefault())
-//                .toLocalDateTime();
         LocalDateTime start = booking.getStart();
         LocalDateTime end = booking.getEnd();
         if (start.isBefore(LocalDateTime.now()) || end.isBefore(start) || start.equals(end)) {

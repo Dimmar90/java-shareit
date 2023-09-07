@@ -44,7 +44,9 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public Item addItem(Long ownerId, Item item) {
         validateItem(item);
-        User user = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
+        User user = userRepository
+                .findById(ownerId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         item.setOwner(ownerId);
         itemRepository.save(item);
         log.info("Добавлена вещь: {}", item);
@@ -81,7 +83,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public ItemDto getItem(Long ownerId, Long id) {
-        Item item = itemRepository.findById(id).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + id));
+        Item item = itemRepository
+                .findById(id)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + id));
         if (!bookingRepository.findLastItemBooking(id, ownerId).isEmpty()
                 && bookingRepository.findLastItemBooking(id, ownerId).get(0).getStatus() != BookingStatus.REJECTED) {
             item.setLastBooking(bookingRepository.findLastItemBooking(id, ownerId).get(0));
@@ -97,7 +101,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> getUserItems(Long ownerId) {
-        User user = userRepository.findById(ownerId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
+        User user = userRepository
+                .findById(ownerId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         List<ItemDto> userItems = new ArrayList<>();
         for (Long id : itemRepository.findIdByOwner(ownerId)) {
             Item item = itemRepository.findById(id).get();
@@ -153,8 +159,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Comment addComment(Long userId, Long itemId, Comment comment) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + userId));
-        Item item = itemRepository.findById(itemId).orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + itemId));
+        User user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + userId));
+        Item item = itemRepository
+                .findById(itemId)
+                .orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + itemId));
         if (comment.getText().isBlank() || comment.getText().isEmpty()) {
             throw new BadRequestException("Комментарий не может быть пустым");
         }
