@@ -1,11 +1,9 @@
 package ru.practicum.shareit.request.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.User;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
