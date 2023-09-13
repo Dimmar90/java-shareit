@@ -1,6 +1,7 @@
 package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.dto.BookingDto;
@@ -96,12 +97,25 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public List<BookingDto> findAllBookerBookings(Long bookerId, String bookingState) {
+    public List<BookingDto> findAllBookerBookings(Long bookerId, String bookingState, Integer from, Integer size) {
+
         User booker = userRepository
                 .findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
         List<Booking> bookerBookings = new ArrayList<>();
         List<BookingDto> bookerBookingsDto = new ArrayList<>();
+
+        if (from != null && size != null) {
+            if (from < 0 || size <= 0) {
+                throw new BadRequestException("Указаны не верные данный нахождения бронирования");
+            }
+            bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, size), bookerId).toList();
+            for (Booking bookerBooking : bookerBookings) {
+                setItemAndBookerToBooking(bookerBooking, bookerId);
+                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
+            }
+            return bookerBookingsDto;
+        }
 
         if (bookingState == null) {
             bookerBookings = bookingRepository.findBookingByBookerId(bookerId);
@@ -161,12 +175,25 @@ public class BookingServiceImpl implements BookingService {
     }
 
 
-    public List<BookingDto> findAllOwnerBookings(Long ownerId, String bookingState) {
+    public List<BookingDto> findAllOwnerBookings(Long ownerId, String bookingState, Integer from, Integer size) {
         User owner = userRepository
                 .findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
         List<Booking> bookerBookings = new ArrayList<>();
         List<BookingDto> bookerBookingsDto = new ArrayList<>();
+
+        if (from != null && size != null) {
+            if (from < 0 || size <= 0) {
+                throw new BadRequestException("Указаны не верные данный нахождения бронирования");
+            }
+            bookerBookings = bookingRepository.findBookingByOwnerIdPageable(PageRequest.of(from, size), ownerId).toList();
+            for (Booking bookerBooking : bookerBookings) {
+                setItemAndBookerToBooking(bookerBooking, ownerId);
+                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
+            }
+            return bookerBookingsDto;
+        }
+
 
         if (bookingState == null) {
             bookerBookings = bookingRepository.findBookingByOwnerId(ownerId);
