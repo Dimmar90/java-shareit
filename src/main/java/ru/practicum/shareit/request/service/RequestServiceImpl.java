@@ -23,9 +23,9 @@ import java.util.List;
 @Slf4j
 public class RequestServiceImpl implements RequestService {
 
-    private ItemRequestRepository itemRequestRepository;
-    private UserRepository userRepository;
-    private ItemRequestDtoMapper requestMapper;
+    ItemRequestRepository itemRequestRepository;
+    UserRepository userRepository;
+    ItemRequestDtoMapper requestMapper;
 
     public RequestServiceImpl(ItemRequestRepository itemRequestRepository,
                               UserRepository userRepository,
