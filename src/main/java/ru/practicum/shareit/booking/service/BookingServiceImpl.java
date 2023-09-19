@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -278,10 +279,11 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    public void setItemAndBookerToBooking(Booking booking, Long bookerId) {
+    public Booking setItemAndBookerToBooking(Booking booking, Long bookerId) {
         User booker = userRepository.findById(bookerId).get();
         Item item = itemRepository.findById(booking.getItemId()).get();
         booking.setBooker(booker);
         booking.setItem(item);
+        return booking;
     }
 }

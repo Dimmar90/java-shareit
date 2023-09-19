@@ -38,7 +38,7 @@ public class RequestServiceImpl implements RequestService {
     @Override
     public ItemRequest addItemRequest(Long requesterId, ItemRequest itemRequest) {
         if (itemRequest.getDescription() == null) {
-            throw new BadRequestException("Отсутствует описание запроса");
+            throw new BadRequestException("Not find request description");
         }
 
         User requester = userRepository
