@@ -28,10 +28,4 @@ public class ExceptionHandlers {
     public Map<String, String> handleNotFound(final RuntimeException e) {
         return Map.of("error", e.getMessage());
     }
-
-    @ExceptionHandler({ServerErrorException.class})
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handleServerError(final RuntimeException e) {
-        return Map.of("error", e.getMessage());
-    }
 }

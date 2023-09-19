@@ -114,4 +114,17 @@ class UserControllerTest {
 
         assertEquals(mapper.writeValueAsString(expectedUsersList), result);
     }
+
+    @Test
+    @SneakyThrows
+    void deleteUser() {
+        User user = createUser("userName", "user@user.com");
+
+        String result = mvc.perform(delete("/users/{id}", user.getId())
+                        .contentType("application/json"))
+                .andExpect(status().isOk())
+                .andReturn()
+                .getResponse()
+                .getContentAsString();
+    }
 }

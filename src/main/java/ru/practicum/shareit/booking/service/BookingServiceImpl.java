@@ -42,11 +42,8 @@ public class BookingServiceImpl implements BookingService {
     public Booking addBooking(Long bookerId, Booking booking) {
         validateBooking(bookerId, booking);
         setItemAndBookerToBooking(booking, bookerId);
-        if (!booking.getItem().getAvailable()) {
-            throw new NotFoundException("Вещь не доступна для бронирования");
-        }
         if (bookerId.equals(booking.getItem().getOwner())) {
-            throw new NotFoundException("Вещь принадлежит пользователю");
+            throw new NotFoundException("Item belong to owner");
         }
         booking.setStatus(BookingStatus.WAITING);
         booking.setBookerId(bookerId);
@@ -65,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Already Approved");
         }
         if (!Objects.equals(sharerId, booking.getItem().getOwner())) {
-            String message = "Не верно указан id владельца";
+            String message = "Set wrong owner id";
             log.warn(message);
             throw new NotFoundException(message);
         }
@@ -91,7 +88,7 @@ public class BookingServiceImpl implements BookingService {
         if (Objects.equals(userId, booking.getBookerId()) || Objects.equals(userId, ownerId)) {
             return mapper.toBookingDto(booking);
         } else {
-            String message = "Пользователь не может найти бронь вещи";
+            String message = "User can't find item booking";
             log.warn(message);
             throw new NotFoundException(message);
         }
@@ -107,7 +104,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (from != null && size != null) {
             if (from < 0 || size <= 0) {
-                throw new BadRequestException("Указаны не верные данный нахождения бронирования");
+                throw new BadRequestException("Wrong pageable settings");
             }
             bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, size), bookerId).toList();
             for (Booking bookerBooking : bookerBookings) {
@@ -184,7 +181,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (from != null && size != null) {
             if (from < 0 || size <= 0) {
-                throw new BadRequestException("Указаны не верные данный нахождения бронирования");
+                throw new BadRequestException("Wrong pageable settings");
             }
             bookerBookings = bookingRepository.findBookingByOwnerIdPageable(PageRequest.of(from, size), ownerId).toList();
             for (Booking bookerBooking : bookerBookings) {
@@ -260,19 +257,19 @@ public class BookingServiceImpl implements BookingService {
                 .findById(booking.getItemId())
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + booking.getItemId()));
         if (booking.getStart() == null || booking.getEnd() == null) {
-            String message = "Не указаны даты бронирования";
+            String message = "Empty booking dates";
             log.warn(message);
             throw new BadRequestException(message);
         }
         if (!itemRepository.findAvailableById(booking.getItemId())) {
-            String message = "Вещь не доступна";
+            String message = "Item not available for booking";
             log.warn(message);
             throw new BadRequestException(message);
         }
         LocalDateTime start = booking.getStart();
         LocalDateTime end = booking.getEnd();
         if (start.isBefore(LocalDateTime.now()) || end.isBefore(start) || start.equals(end)) {
-            String message = "Не верно указаны даты бронирования";
+            String message = "Not correct booking dates";
             log.warn(message);
             throw new BadRequestException(message);
         }
