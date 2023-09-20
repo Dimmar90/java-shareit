@@ -8,6 +8,7 @@ import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class UserServiceTest {
@@ -117,10 +119,17 @@ class UserServiceTest {
         listOfUser.add(user);
         List<UserDto> expectingListOfUsersDto = new ArrayList<>();
         expectingListOfUsersDto.add(userMapper.toUserDto(listOfUser.get(0)));
-
         Mockito.when(userRepository.findAll()).thenReturn(listOfUser);
 
         List<UserDto> actualUsersDtoList = userService.getAllUsers();
+
         assertEquals(actualUsersDtoList, expectingListOfUsersDto);
+    }
+
+    @Test
+    void deleteTest() {
+        User user = createUser("userName", "user@email");
+        Mockito.when(userRepository.findById(user.getId())).thenReturn(Optional.of(user));
+        userService.delete(user.getId());
     }
 }

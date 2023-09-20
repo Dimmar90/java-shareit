@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
     public User update(User userUpdated, Long id) {
         User user = userRepository
                 .findById(id)
-                .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + id));
+                .orElseThrow(() -> new NotFoundException("User not found id: " + id));
         userUpdated.setId(id);
         if (userUpdated.getName() != null) {
             userRepository.updateName(userUpdated.getName(), id);
