@@ -19,7 +19,7 @@ create TABLE IF NOT EXISTS items
   description VARCHAR(255)                            NOT NULL,
   available   BOOLEAN,
   owner       BIGINT,
-  requestId   BIGINT,
+  REQUEST_ID   BIGINT,
   CONSTRAINT  pk_item PRIMARY KEY (id)
 );
 
