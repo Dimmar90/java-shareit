@@ -118,7 +118,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Wrong pageable settings");
         }
 
-        if (from > 0 && size > bookingRepository.findBookingByBookerId(booker.getId()).size() - from){
+        if (from > 0 && size > bookingRepository.findBookingByBookerId(booker.getId()).size() - from) {
             int pageSize = bookingRepository.findBookingByBookerId(booker.getId()).size() - from;
             bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, pageSize), bookerId).toList();
             for (Booking bookerBooking : bookerBookings) {
@@ -129,10 +129,10 @@ public class BookingServiceImpl implements BookingService {
         } else {
             bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, size), bookerId).toList();
         }
-            for (Booking bookerBooking : bookerBookings) {
-                setItemAndBookerToBooking(bookerBooking, bookerId);
-                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
-            }
+        for (Booking bookerBooking : bookerBookings) {
+            setItemAndBookerToBooking(bookerBooking, bookerId);
+            bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
+        }
         return bookerBookingsDto;
     }
 
