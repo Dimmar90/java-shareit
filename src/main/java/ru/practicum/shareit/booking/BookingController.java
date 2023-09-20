@@ -4,6 +4,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.service.BookingService;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
@@ -42,8 +45,8 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<?> getAllUserBookings(@RequestHeader("X-Sharer-User-Id") Long bookerId,
                                                 @RequestParam(value = "state", required = false) String bookingState,
-                                                @RequestParam(value = "from", required = false) Integer from,
-                                                @RequestParam(value = "size", required = false) Integer size) {
+                                                @RequestParam(value = "from", required = false) @Min(0) Integer from,
+                                                @RequestParam(value = "size", required = false) @Min(1) @Max(100) Integer size) {
         return new ResponseEntity<>(bookingService.findAllBookerBookings(bookerId, bookingState, from, size), OK);
     }
 

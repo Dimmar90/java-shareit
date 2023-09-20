@@ -41,7 +41,6 @@ class ItemRequestControllerTest {
 
     private final ItemRequestDtoMapper requestDtoMapper = new ItemRequestDtoMapper();
 
-
     public ItemRequest createItemRequest() {
         ItemRequest itemRequest = new ItemRequest();
         itemRequest.setId(1L);
@@ -109,7 +108,6 @@ class ItemRequestControllerTest {
 
         assertEquals(mapper.writeValueAsString(expectedItemRequestDto), result);
     }
-
 
     @Test
     @SneakyThrows

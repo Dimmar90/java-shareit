@@ -95,18 +95,18 @@ public class BookingServiceImpl implements BookingService {
     }
 
     public List<BookingDto> findAllBookerBookings(Long bookerId, String bookingState, Integer from, Integer size) {
-
         User booker = userRepository
                 .findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
         List<Booking> bookerBookings = new ArrayList<>();
         List<BookingDto> bookerBookingsDto = new ArrayList<>();
 
-        if (from != null && size != null) {
-            if (from < 0 || size <= 0) {
-                throw new BadRequestException("Wrong pageable settings");
+        if (from == null && size == null) {
+            if (bookingState == null) {
+                bookerBookings = bookingRepository.findBookingByBookerId(bookerId);
+            } else {
+                bookerBookings = findBookingsByStatus(bookerId, bookingState);
             }
-            bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, size), bookerId).toList();
             for (Booking bookerBooking : bookerBookings) {
                 setItemAndBookerToBooking(bookerBooking, bookerId);
                 bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
@@ -114,16 +114,25 @@ public class BookingServiceImpl implements BookingService {
             return bookerBookingsDto;
         }
 
-        if (bookingState == null) {
-            bookerBookings = bookingRepository.findBookingByBookerId(bookerId);
-        } else {
-            bookerBookings = findBookingsByStatus(bookerId, bookingState);
+        if (from < 0 || size <= 0) {
+            throw new BadRequestException("Wrong pageable settings");
         }
 
-        for (Booking bookerBooking : bookerBookings) {
-            setItemAndBookerToBooking(bookerBooking, bookerId);
-            bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
+        if (from > 0 && size > bookingRepository.findBookingByBookerId(booker.getId()).size() - from){
+            int pageSize = bookingRepository.findBookingByBookerId(booker.getId()).size() - from;
+            bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, pageSize), bookerId).toList();
+            for (Booking bookerBooking : bookerBookings) {
+                setItemAndBookerToBooking(bookerBooking, bookerId);
+                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
+            }
+            return bookerBookingsDto;
+        } else {
+            bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, size), bookerId).toList();
         }
+            for (Booking bookerBooking : bookerBookings) {
+                setItemAndBookerToBooking(bookerBooking, bookerId);
+                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
+            }
         return bookerBookingsDto;
     }
 
@@ -190,7 +199,6 @@ public class BookingServiceImpl implements BookingService {
             }
             return bookerBookingsDto;
         }
-
 
         if (bookingState == null) {
             bookerBookings = bookingRepository.findBookingByOwnerId(ownerId);
