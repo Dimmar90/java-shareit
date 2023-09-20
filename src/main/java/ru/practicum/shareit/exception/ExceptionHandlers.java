@@ -11,12 +11,6 @@ import java.util.Map;
 @RestControllerAdvice
 @Slf4j
 public class ExceptionHandlers {
-    @ExceptionHandler({AlreadyExistException.class})
-    @ResponseStatus(HttpStatus.CONFLICT)
-    public Map<String, String> handleConflict(final RuntimeException e) {
-        return Map.of("error", e.getMessage());
-    }
-
     @ExceptionHandler({BadRequestException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleBadRequest(final RuntimeException e) {
