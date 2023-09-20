@@ -166,7 +166,7 @@ public class ItemServiceImpl implements ItemService {
                 .findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + itemId));
         if (comment.getText().isBlank() || comment.getText().isEmpty()) {
-            throw new BadRequestException("Комментарий не может быть пустым");
+            throw new BadRequestException("Comment cant be empty");
         }
         if (bookingRepository.countUserBookingsOfItem(userId, itemId) != 0) {
             comment.setAuthorName(user.getName());
@@ -175,7 +175,7 @@ public class ItemServiceImpl implements ItemService {
             commentRepository.save(comment);
             return comment;
         } else {
-            throw new BadRequestException("Пользователь не может оставить комментарий");
+            throw new BadRequestException("User cant add comment");
         }
     }
 }

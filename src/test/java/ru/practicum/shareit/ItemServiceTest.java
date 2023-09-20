@@ -236,6 +236,15 @@ class ItemServiceTest {
     }
 
     @Test
+    void searchItemWithEmptyTextTest() {
+        List<ItemDto> expectedSearchingItemsDtoList = new ArrayList<>();
+
+        List<ItemDto> actualListOfSearchingItemsDto = itemService.searchItem("");
+
+        assertEquals(expectedSearchingItemsDtoList, actualListOfSearchingItemsDto);
+    }
+
+    @Test
     void validateItemWithNoAvailableTest() {
         Item item = createItem("itemName", "itemDescription", null);
 
@@ -283,5 +292,38 @@ class ItemServiceTest {
         Comment actualComment = itemService.addComment(owner.getId(), item.getId(), createComment());
 
         assertEquals(expectedComment.getText(), actualComment.getText());
+    }
+
+    @Test
+    void addCommentFromWrongUserTest() {
+        Item item = createItem("itemName", "itemDescription", true);
+        User owner = createOwner();
+        Mockito.when(userRepository.findById(item.getOwner())).thenReturn(Optional.of(owner));
+        Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        Mockito.when(bookingRepository.countUserBookingsOfItem(owner.getId(), item.getId())).thenReturn(0);
+
+        final BadRequestException exception = Assertions.assertThrows(
+                BadRequestException.class,
+                () -> itemService.addComment(owner.getId(), item.getId(), createComment())
+        );
+
+        assertEquals("User cant add comment", exception.getMessage());
+    }
+
+    @Test
+    void addEmptyCommentTest() {
+        Item item = createItem("itemName", "itemDescription", true);
+        User owner = createOwner();
+        Comment expectedComment = createComment();
+        expectedComment.setText("");
+        Mockito.when(userRepository.findById(item.getOwner())).thenReturn(Optional.of(owner));
+        Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+
+        final BadRequestException exception = Assertions.assertThrows(
+                BadRequestException.class,
+                () -> itemService.addComment(owner.getId(), item.getId(), expectedComment)
+        );
+
+        assertEquals("Comment cant be empty", exception.getMessage());
     }
 }

@@ -29,7 +29,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User create(User user) {
         if (user.getEmail() == null) {
-            String message = "Отсутствует email пользователя";
+            String message = "User email is absent";
             log.error(message);
             throw new BadRequestException(message);
         }
