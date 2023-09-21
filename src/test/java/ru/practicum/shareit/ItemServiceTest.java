@@ -192,10 +192,12 @@ class ItemServiceTest {
         List<Comment> comments = createCommentList(createComment());
         Mockito.when(itemRepository.findById(expectedItem.getId())).thenReturn(Optional.of(expectedItem));
         Mockito.when(bookingRepository.findLastItemBooking(expectedItem.getId(), expectedItem.getOwner())).thenReturn(bookings);
+        Mockito.when(bookingRepository.findNextItemBooking(expectedItem.getId(),expectedItem.getOwner()))
+                .thenReturn(bookings);
         Mockito.when(commentRepository.findCommentByItemId(expectedItem.getId())).thenReturn(comments);
 
         ItemDto actualItem = itemService.getItem(expectedItem.getOwner(), expectedItem.getId());
-        System.out.println(actualItem);
+
         assertEquals(itemMapper.toItemDto(expectedItem), actualItem);
     }
 
@@ -209,10 +211,20 @@ class ItemServiceTest {
         itemsIdsList.add(item.getOwner());
         List<Item> listOfUserItems = new ArrayList<>();
         listOfUserItems.add(item);
+        Booking lastBooking = createBooking();
+        Booking nextBooking = createBooking();
+        List<Booking> bookings = createBookingList(createBooking());
+        item.setLastBooking(lastBooking);
+        item.setNextBooking(nextBooking);
         List<ItemDto> expectedListOfUserItemsDto = createListItemsDto(listOfUserItems);
         Mockito.when(userRepository.findById(item.getOwner())).thenReturn(Optional.of(owner));
         Mockito.when(itemRepository.findIdByOwner(item.getOwner())).thenReturn(itemsIdsList);
         Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
+        Mockito.when(bookingRepository.findNextItemBooking(item.getId(),item.getOwner()))
+                .thenReturn(bookings);
+        Mockito.when(bookingRepository.findLastItemBooking(item.getId(),item.getOwner()))
+                .thenReturn(bookings);
+
 
         List<ItemDto> actualUserItemsDtoList = itemService.getUserItems(owner.getId());
 

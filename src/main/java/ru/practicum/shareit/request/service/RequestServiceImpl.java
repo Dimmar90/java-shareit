@@ -95,10 +95,6 @@ public class RequestServiceImpl implements RequestService {
             pageableSize = PageRequest.of(from, size);
         }
 
-        if (from < 0 || size < 0) {
-            throw new BadRequestException("Указаны не верные данный нахождения запросов");
-        }
-
         if (requesterId != null) {
             User requester = userRepository
                     .findById(requesterId)

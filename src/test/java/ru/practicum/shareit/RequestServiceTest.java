@@ -1,5 +1,6 @@
 package ru.practicum.shareit;
 
+import org.apache.coyote.Request;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,7 +54,6 @@ class RequestServiceTest {
 
         return itemRequest;
     }
-
 
     private List<ItemRequestDto> createItemRequestDtoList(List<ItemRequest> itemRequestList) {
         List<ItemRequestDto> itemRequestDtoList = new ArrayList<>();
@@ -149,6 +149,22 @@ class RequestServiceTest {
         Mockito.when(itemRequestRepository.findItemRequestsOfOtherUsersPageable(pageableSize, requester.getId())).thenReturn(getRequests(0, 1));
 
         List<ItemRequestDto> actualRequestList = requestService.findRequestsPageable(requester.getId(), 0, 1);
+
+        assertEquals(expectedItemRequest, actualRequestList);
+    }
+
+    @Test
+    void findAllRequestsWithoutPageableTest() {
+        ItemRequest itemRequest = createRequest();
+        User requester = createRequester();
+        List<ItemRequest> requestList = new ArrayList<>();
+        requestList.add(itemRequest);
+        List<ItemRequestDto> expectedItemRequest = new ArrayList<>();
+        expectedItemRequest.add(itemRequestDtoMapper.toItemRequestDto(requestList.get(0)));
+        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(requester));
+        Mockito.when(itemRequestRepository.findAllItemRequests()).thenReturn(requestList);
+
+        List<ItemRequestDto> actualRequestList = requestService.findRequestsPageable(requester.getId(), null, null);
 
         assertEquals(expectedItemRequest, actualRequestList);
     }

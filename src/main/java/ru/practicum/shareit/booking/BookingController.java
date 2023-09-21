@@ -45,8 +45,8 @@ public class BookingController {
     @GetMapping
     public ResponseEntity<?> getAllUserBookings(@RequestHeader("X-Sharer-User-Id") Long bookerId,
                                                 @RequestParam(value = "state", required = false) String bookingState,
-                                                @RequestParam(value = "from", required = false) @Min(0) Integer from,
-                                                @RequestParam(value = "size", required = false) @Min(1) @Max(100) Integer size) {
+                                                @RequestParam(value = "from", required = false) Integer from,
+                                                @RequestParam(value = "size", required = false) Integer size) {
         return new ResponseEntity<>(bookingService.findAllBookerBookings(bookerId, bookingState, from, size), OK);
     }
 
