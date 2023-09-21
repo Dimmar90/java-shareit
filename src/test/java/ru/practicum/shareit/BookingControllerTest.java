@@ -125,12 +125,12 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    void getAllUserBooking(){
+    void getAllUserBooking() {
         Booking booking = createBooking();
         BookingDto bookingDto = bookingMapper.toBookingDto(booking);
         List<BookingDto> bookingDtoList = new ArrayList<>();
         bookingDtoList.add(bookingDto);
-        when(bookingService.findAllBookerBookings(bookingDto.getBooker().getId(),null,0,1))
+        when(bookingService.findAllBookerBookings(bookingDto.getBooker().getId(), null, 0, 1))
                 .thenReturn(bookingDtoList);
 
         String result = mvc.perform(get("/bookings?from=0&size=1")
@@ -147,12 +147,12 @@ class BookingControllerTest {
 
     @Test
     @SneakyThrows
-    void getAllOwnerBooking(){
+    void getAllOwnerBooking() {
         Booking booking = createBooking();
         BookingDto bookingDto = bookingMapper.toBookingDto(booking);
         List<BookingDto> bookingDtoList = new ArrayList<>();
         bookingDtoList.add(bookingDto);
-        when(bookingService.findAllOwnerBookings(bookingDto.getItem().getOwner(),null,0,1))
+        when(bookingService.findAllOwnerBookings(bookingDto.getItem().getOwner(), null, 0, 1))
                 .thenReturn(bookingDtoList);
 
         String result = mvc.perform(get("/bookings/owner?from=0&size=1")
