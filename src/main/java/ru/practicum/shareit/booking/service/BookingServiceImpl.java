@@ -62,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
             throw new BadRequestException("Already Approved");
         }
         if (!Objects.equals(sharerId, booking.getItem().getOwner())) {
-            String message = "Set wrong owner id";
+            String message = "Set wrong id for booking approved, " + sharerId + " is not owner id for item id : " + booking.getItem().getId();
             log.warn(message);
             throw new NotFoundException(message);
         }
@@ -99,41 +99,40 @@ public class BookingServiceImpl implements BookingService {
                 .findById(bookerId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + bookerId));
         List<Booking> bookerBookings = new ArrayList<>();
-        List<BookingDto> bookerBookingsDto = new ArrayList<>();
 
-        if (from == null && size == null) {
-            if (bookingState == null) {
-                bookerBookings = bookingRepository.findBookingByBookerId(bookerId);
-            } else {
-                bookerBookings = findBookingsByStatus(bookerId, bookingState);
-            }
-            for (Booking bookerBooking : bookerBookings) {
-                setItemAndBookerToBooking(bookerBooking, bookerId);
-                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
-            }
-            return bookerBookingsDto;
+        if (bookingState == null && from == null && size == null) {
+            bookerBookings = bookingRepository.findBookingByBookerId(bookerId);
+            return convertToBookingDtoList(bookerBookings);
         }
 
-        if (from < 0 || size <= 0) {
-            throw new BadRequestException("Wrong pageable settings");
+        if (bookingState != null && from == null && size == null) {
+            bookerBookings = findBookingsByStatus(bookerId, bookingState);
+            return convertToBookingDtoList(bookerBookings);
         }
 
-        if (from > 0 && size > bookingRepository.findBookingByBookerId(booker.getId()).size() - from) {
+        if (from > 0 && size >= bookingRepository.findBookingByBookerId(booker.getId()).size() - from) {
             int pageSize = bookingRepository.findBookingByBookerId(booker.getId()).size() - from;
             bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, pageSize), bookerId).toList();
-            for (Booking bookerBooking : bookerBookings) {
-                setItemAndBookerToBooking(bookerBooking, bookerId);
-                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
-            }
-            return bookerBookingsDto;
-        } else {
+            return convertToBookingDtoList(bookerBookings);
+        }
+
+        if (from < 0) {
+            String message = "Wrong pageable settings : from is " + from + " , can't be < 0";
+            log.error(message);
+            throw new BadRequestException(message);
+        }
+
+        if (size < 1) {
+            String message = "Wrong pageable settings : size is " + from + " , can't be < 1";
+            log.error(message);
+            throw new BadRequestException(message);
+        }
+
+        if (from == 0) {
             bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, size), bookerId).toList();
         }
-        for (Booking bookerBooking : bookerBookings) {
-            setItemAndBookerToBooking(bookerBooking, bookerId);
-            bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
-        }
-        return bookerBookingsDto;
+
+        return convertToBookingDtoList(bookerBookings);
     }
 
     public List<Booking> findBookingsByStatus(Long bookerId, String bookingStatus) {
@@ -180,48 +179,45 @@ public class BookingServiceImpl implements BookingService {
         return bookerBookings;
     }
 
-
     public List<BookingDto> findAllOwnerBookings(Long ownerId, String bookingState, Integer from, Integer size) {
         User owner = userRepository
                 .findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
-        List<Booking> bookerBookings = new ArrayList<>();
-        List<BookingDto> bookerBookingsDto = new ArrayList<>();
+        List<Booking> ownerBookings = new ArrayList<>();
 
-        if (from == null && size == null) {
-            if (bookingState == null) {
-                bookerBookings = bookingRepository.findBookingByOwnerId(ownerId);
-            } else {
-                bookerBookings = findOwnerBookingsByStatus(ownerId, bookingState);
-            }
-            for (Booking bookerBooking : bookerBookings) {
-                Long bookerId = bookerBooking.getBookerId();
-                setItemAndBookerToBooking(bookerBooking, bookerId);
-                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
-            }
-            return bookerBookingsDto;
+        if (bookingState == null && from == null && size == null) {
+            ownerBookings = bookingRepository.findBookingByOwnerId(ownerId);
+            return convertToBookingDtoList(ownerBookings);
         }
 
-        if (from < 0 || size <= 0) {
-            throw new BadRequestException("Wrong pageable settings");
+        if (bookingState != null && from == null && size == null) {
+            ownerBookings = findOwnerBookingsByStatus(ownerId, bookingState);
+            return convertToBookingDtoList(ownerBookings);
         }
 
-        if (from > 0 && size > bookingRepository.findBookingByOwnerId(ownerId).size() - from) {
+        if (from > 0 && size >= bookingRepository.findBookingByOwnerId(ownerId).size() - from) {
             int pageSize = bookingRepository.findBookingByOwnerId(ownerId).size() - from;
-            bookerBookings = bookingRepository.findBookingByOwnerIdPageable(PageRequest.of(from, pageSize), ownerId).toList();
-            for (Booking bookerBooking : bookerBookings) {
-                setItemAndBookerToBooking(bookerBooking, ownerId);
-                bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
-            }
-            return bookerBookingsDto;
-        } else {
-            bookerBookings = bookingRepository.findBookingByOwnerIdPageable(PageRequest.of(from, size), ownerId).toList();
+            ownerBookings = bookingRepository.findBookingByOwnerIdPageable(PageRequest.of(from, pageSize), ownerId).toList();
+            return convertToBookingDtoList(ownerBookings);
         }
-        for (Booking bookerBooking : bookerBookings) {
-            setItemAndBookerToBooking(bookerBooking, ownerId);
-            bookerBookingsDto.add(mapper.toBookingDto(bookerBooking));
+
+        if (from < 0) {
+            String message = "Wrong pageable settings : from is " + from + " , can't be < 0";
+            log.error(message);
+            throw new BadRequestException(message);
         }
-        return bookerBookingsDto;
+
+        if (size < 1) {
+            String message = "Wrong pageable settings : size is " + from + " , can't be < 1";
+            log.error(message);
+            throw new BadRequestException(message);
+        }
+
+        if (from == 0) {
+            ownerBookings = bookingRepository.findBookingByOwnerIdPageable(PageRequest.of(from, size), ownerId).toList();
+        }
+
+        return convertToBookingDtoList(ownerBookings);
     }
 
     public List<Booking> findOwnerBookingsByStatus(Long ownerId, String bookingStatus) {
@@ -299,5 +295,15 @@ public class BookingServiceImpl implements BookingService {
         booking.setBooker(booker);
         booking.setItem(item);
         return booking;
+    }
+
+    private List<BookingDto> convertToBookingDtoList(List<Booking> bookerBookings) {
+        List<BookingDto> bookingDtoList = new ArrayList<>();
+        for (Booking bookerBooking : bookerBookings) {
+            Long bookerId = bookerBooking.getBookerId();
+            setItemAndBookerToBooking(bookerBooking, bookerId);
+            bookingDtoList.add(mapper.toBookingDto(bookerBooking));
+        }
+        return bookingDtoList;
     }
 }

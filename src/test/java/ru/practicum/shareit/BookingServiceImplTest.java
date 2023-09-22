@@ -1,4 +1,4 @@
-package ru.practicum.shareit;
+﻿package ru.practicum.shareit;
 
 
 import org.junit.jupiter.api.Assertions;
@@ -188,7 +188,8 @@ class BookingServiceImplTest {
                 () -> bookingServiceImpl.approved(wrongOwnerId, booking.getId(), Boolean.TRUE)
         );
 
-        assertEquals("Set wrong owner id", exception.getMessage());
+        assertEquals("Set wrong id for booking approved, " + wrongOwnerId + " is not owner id for item id : " + booking.getItem().getId()
+                , exception.getMessage());
     }
 
     @Test
@@ -284,7 +285,7 @@ class BookingServiceImplTest {
                 () -> bookingServiceImpl.findAllBookerBookings(booker.getId(), null, 0, wrongPageableSetting)
         );
 
-        assertEquals("Wrong pageable settings", exception.getMessage());
+        assertEquals("Wrong pageable settings : size is 0 , can't be < 1", exception.getMessage());
     }
 
     @Test
@@ -367,7 +368,7 @@ class BookingServiceImplTest {
                 () -> bookingServiceImpl.findAllOwnerBookings(ownerId, null, 0, wrongPageableSetting)
         );
 
-        assertEquals("Wrong pageable settings", exception.getMessage());
+        assertEquals("Wrong pageable settings : size is 0 , can't be < 1", exception.getMessage());
     }
 
     @Test
