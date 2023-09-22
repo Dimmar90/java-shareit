@@ -187,8 +187,8 @@ class BookingServiceImplTest {
                 () -> bookingServiceImpl.approved(wrongOwnerId, booking.getId(), Boolean.TRUE)
         );
 
-        assertEquals("Set wrong id for booking approved, " + wrongOwnerId + " is not owner id for item id : " + booking.getItem().getId()
-                , exception.getMessage());
+        assertEquals("Set wrong id for booking approved, " + wrongOwnerId + " is not owner id for item id : " + booking.getItem().getId(),
+                exception.getMessage());
     }
 
     @Test
