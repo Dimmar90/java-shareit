@@ -75,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
             log.info("Обновлена вещь: {}", updatedItem);
             return updatedItem;
         } else {
-            String message = "У пользователя нет доступа к обновлению вещи";
+            String message = "User has not access to update item";
             log.error(message);
             throw new NotFoundException(message);
         }
@@ -139,19 +139,19 @@ public class ItemServiceImpl implements ItemService {
         return searchingItems;
     }
 
-    private void validateItem(Item item) {
+    public void validateItem(Item item) {
         if (item.getAvailable() == null) {
-            String message = "Доступность вещи не найдена";
+            String message = "Not found item available";
             log.warn(message);
             throw new BadRequestException(message);
         }
         if (item.getName().isEmpty() || item.getName().isBlank()) {
-            String message = "Наименование вещи не найдено";
+            String message = "Not found item name";
             log.warn(message);
             throw new BadRequestException(message);
         }
         if (item.getDescription() == null) {
-            String message = "Описание вещи не найдено";
+            String message = "Not found item description";
             log.warn(message);
             throw new BadRequestException(message);
         }
@@ -166,7 +166,7 @@ public class ItemServiceImpl implements ItemService {
                 .findById(itemId)
                 .orElseThrow(() -> new NotFoundException("Не найдена вещь id: " + itemId));
         if (comment.getText().isBlank() || comment.getText().isEmpty()) {
-            throw new BadRequestException("Комментарий не может быть пустым");
+            throw new BadRequestException("Comment cant be empty");
         }
         if (bookingRepository.countUserBookingsOfItem(userId, itemId) != 0) {
             comment.setAuthorName(user.getName());
@@ -175,7 +175,7 @@ public class ItemServiceImpl implements ItemService {
             commentRepository.save(comment);
             return comment;
         } else {
-            throw new BadRequestException("Пользователь не может оставить комментарий");
+            throw new BadRequestException("User cant add comment");
         }
     }
 }

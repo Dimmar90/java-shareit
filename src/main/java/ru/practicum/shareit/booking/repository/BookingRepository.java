@@ -1,5 +1,7 @@
 package ru.practicum.shareit.booking.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -21,6 +23,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
     @Query("SELECT b FROM Booking AS b WHERE b.bookerId = ?1 " +
             "ORDER BY b.start DESC")
     List<Booking> findBookingByBookerId(Long bookerId);
+
+    @Query("SELECT b FROM Booking AS b WHERE b.bookerId = ?1 " +
+            "ORDER BY b.start DESC")
+    Page<Booking> findBookingByBookerIdPageable(Pageable pageable, Long bookerId);
 
     @Query("SELECT b FROM Booking AS b " +
             "WHERE b.bookerId = ?1 AND b.status = 'WAITING' " +
@@ -56,6 +62,11 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
             "WHERE i.owner = ?1 " +
             "ORDER BY b.start DESC")
     List<Booking> findBookingByOwnerId(Long ownerId);
+
+    @Query("SELECT b FROM Booking AS b JOIN Item AS i ON b.itemId = i.id " +
+            "WHERE i.owner = ?1 " +
+            "ORDER BY b.start DESC")
+    Page<Booking> findBookingByOwnerIdPageable(Pageable pageable, Long ownerId);
 
     @Query("SELECT b FROM Booking AS b JOIN Item AS i ON b.itemId = i.id " +
             "WHERE i.owner = ?1 AND b.status = 'WAITING' " +

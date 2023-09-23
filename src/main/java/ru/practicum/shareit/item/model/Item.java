@@ -21,6 +21,7 @@ public class Item {
     private String description;
     private Boolean available;
     private Long owner;
+    @Column(name = "REQUEST_ID")
     private Long requestId;
     @Transient
     private Booking lastBooking;
