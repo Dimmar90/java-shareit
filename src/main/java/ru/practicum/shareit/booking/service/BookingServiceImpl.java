@@ -56,7 +56,7 @@ public class BookingServiceImpl implements BookingService {
     public Booking approved(Long sharerId, Long id, Boolean approved) {
         Booking booking = bookingRepository
                 .findBookingById(id)
-                .orElseThrow(() -> new NotFoundException("Не найдено бронирование id: " + id));
+                .orElseThrow(() -> new NotFoundException("Cant find booking with id: " + id));
         setItemAndBookerToBooking(booking, booking.getBookerId());
         if (booking.getStatus().equals(BookingStatus.APPROVED)) {
             throw new BadRequestException("Already Approved");
