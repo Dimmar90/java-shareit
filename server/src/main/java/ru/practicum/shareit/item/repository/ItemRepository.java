@@ -11,11 +11,11 @@ import java.util.Optional;
 public interface ItemRepository extends JpaRepository<Item, Long> {
     Optional<Item> findById(Long id);
 
-    @Query("SELECT name FROM Item i " +
+    @Query("SELECT i.name FROM Item i " +
             "WHERE i.id = ?1")
     String findNameById(Long id);
 
-    @Query("SELECT owner FROM Item i " +
+    @Query("SELECT i.owner FROM Item i " +
             "WHERE i.id = ?1")
     Long findOwnerById(Long id);
 
@@ -25,7 +25,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "WHERE i.id = ?2")
     void updateName(String name, Long id);
 
-    @Query("SELECT description FROM Item i " +
+    @Query("SELECT i.description FROM Item i " +
             "WHERE i.id = ?1")
     String findDescriptionById(Long id);
 
@@ -35,7 +35,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
             "WHERE i.id = ?2")
     void updateDescription(String name, Long id);
 
-    @Query("SELECT available FROM Item i " +
+    @Query("SELECT i.available FROM Item i " +
             "WHERE i.id = ?1")
     Boolean findAvailableById(Long id);
 
@@ -43,7 +43,9 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("UPDATE Item i SET i.available = ?1 WHERE i.id = ?2")
     void updateAvailable(Boolean available, Long id);
 
-    @Query("SELECT id FROM Item i WHERE i.owner = ?1")
+    @Query("SELECT i.id FROM Item i " +
+            "WHERE i.owner = ?1 " +
+            "ORDER BY i.id")
     List<Long> findIdByOwner(Long owner);
 
     @Query("SELECT i FROM Item i " +
