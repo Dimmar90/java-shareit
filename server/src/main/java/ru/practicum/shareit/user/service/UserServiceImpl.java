@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.dto.UserDto;
@@ -28,11 +27,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User create(User user) {
-        if (user.getEmail() == null) {
-            String message = "User email is absent";
-            log.error(message);
-            throw new BadRequestException(message);
-        }
         userRepository.save(user);
         log.info("Добавлен пользователь: {}", user);
         return user;

@@ -49,17 +49,17 @@ class UserServiceTest {
         assertEquals(actualUser, expectedUser);
     }
 
-    @Test
-    void createUserWithMailIsNull() {
-        User expectedUser = createUser("userName", null);
-
-        final BadRequestException exception = Assertions.assertThrows(
-                BadRequestException.class,
-                () -> userService.create(expectedUser)
-        );
-
-        assertEquals("User email is absent", exception.getMessage());
-    }
+//    @Test
+//    void createUserWithMailIsNull() {
+//        User expectedUser = createUser("userName", null);
+//
+//        final BadRequestException exception = Assertions.assertThrows(
+//                BadRequestException.class,
+//                () -> userService.create(expectedUser)
+//        );
+//
+//        assertEquals("User email is absent", exception.getMessage());
+//    }
 
     @Test
     void updateUserTest() {

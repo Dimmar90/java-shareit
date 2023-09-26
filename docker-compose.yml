@@ -1,26 +1,23 @@
 version: '3.8'
 services:
-  #  gateway:
-  #    build:
-  #    image:
-  #    container_name:
-  #    ports:
-  #      - "8080:8080"
-  #    depends_on:
-  #    environment:
-  #      - SHAREIT_SERVER_URL=http://server:9090
-
-  server:
-    build: Dockerfile
-    image: server_image
-    container_name: server_container
+  gateway:
+    build: gateway/
+    image: gateway
+    container_name: container_gateway
     ports:
       - "8080:8080"
+    environment:
+      - SHAREIT_SERVER_URL=http://server:9090
+
+  server:
+    build: server/
+    image: server
+    container_name: container_server
+    ports:
+      - "9090:9090"
     depends_on:
       - db
     environment:
-      - SERVER_PORT= 8080
-      - TZ=Europe/Moscow
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
       - DB_NAME=postgres
       - POSTGRES_USER=root
@@ -29,8 +26,8 @@ services:
       - DB_PORT=5432
 
   db:
-    image: postgres:15.4-alpine
-    #    container_name:
+    image: postgres:15.3
+    container_name: container_postgres
     ports:
       - "6541:5432"
     environment:
