@@ -23,17 +23,21 @@ public class ItemController {
     }
 
     @PostMapping
-    public ResponseEntity<?> add(@RequestHeader("X-Sharer-User-Id") Long ownerId, @RequestBody Item item) {
+    public ResponseEntity<?> add(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                 @RequestBody Item item) {
         return new ResponseEntity<>(itemService.addItem(ownerId, item), CREATED);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> update(@RequestHeader("X-Sharer-User-Id") Long ownerId, @PathVariable("id") Long id, @RequestBody Item item) {
+    public ResponseEntity<?> update(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                    @PathVariable("id") Long id,
+                                    @RequestBody Item item) {
         return new ResponseEntity<>(itemService.updateItem(ownerId, id, item), OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getItem(@RequestHeader("X-Sharer-User-Id") Long ownerId, @PathVariable("id") Long id) {
+    public ResponseEntity<?> getItem(@RequestHeader("X-Sharer-User-Id") Long ownerId,
+                                     @PathVariable("id") Long id) {
         return new ResponseEntity<>(itemService.getItem(ownerId, id), OK);
     }
 
@@ -48,7 +52,9 @@ public class ItemController {
     }
 
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<?> addComment(@RequestHeader("X-Sharer-User-Id") Long userId, @PathVariable("itemId") Long itemId, @RequestBody Comment comment) {
+    public ResponseEntity<?> addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                        @PathVariable("itemId") Long itemId,
+                                        @RequestBody Comment comment) {
         return new ResponseEntity<>(itemService.addComment(userId, itemId, comment), OK);
     }
 }

@@ -43,7 +43,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public Item addItem(Long ownerId, Item item) {
-        validateItem(item);
+       // validateItem(item);
         User user = userRepository
                 .findById(ownerId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + ownerId));
@@ -139,23 +139,23 @@ public class ItemServiceImpl implements ItemService {
         return searchingItems;
     }
 
-    public void validateItem(Item item) {
-        if (item.getAvailable() == null) {
-            String message = "Not found item available";
-            log.warn(message);
-            throw new BadRequestException(message);
-        }
-        if (item.getName().isEmpty() || item.getName().isBlank()) {
-            String message = "Not found item name";
-            log.warn(message);
-            throw new BadRequestException(message);
-        }
-        if (item.getDescription() == null) {
-            String message = "Not found item description";
-            log.warn(message);
-            throw new BadRequestException(message);
-        }
-    }
+//    public void validateItem(Item item) {
+//        if (item.getAvailable() == null) {
+//            String message = "Not found item available";
+//            log.warn(message);
+//            throw new BadRequestException(message);
+//        }
+//        if (item.getName().isEmpty() || item.getName().isBlank()) {
+//            String message = "Not found item name";
+//            log.warn(message);
+//            throw new BadRequestException(message);
+//        }
+//        if (item.getDescription() == null) {
+//            String message = "Not found item description";
+//            log.warn(message);
+//            throw new BadRequestException(message);
+//        }
+//    }
 
     @Override
     public Comment addComment(Long userId, Long itemId, Comment comment) {
