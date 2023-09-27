@@ -7,6 +7,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.exception.BadRequestException;
+import ru.practicum.shareit.item.dto.Comment;
 import ru.practicum.shareit.item.dto.ItemDto;
 
 @Controller
@@ -59,5 +60,15 @@ public class ItemController {
     @GetMapping("/search")
     public ResponseEntity<?> search(@RequestParam(value = "text") String searchingText) {
         return itemClient.search(searchingText);
+    }
+
+    @PostMapping("/{itemId}/comment")
+    public ResponseEntity<?> addComment(@RequestHeader("X-Sharer-User-Id") Long userId,
+                                        @PathVariable("itemId") Long itemId,
+                                        @RequestBody Comment comment) {
+        if (comment.getText().isBlank() || comment.getText().isEmpty()) {
+            throw new BadRequestException("Comment cant be empty");
+        }
+        return itemClient.addComment(userId, itemId, comment);
     }
 }

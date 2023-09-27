@@ -272,20 +272,20 @@ class BookingServiceImplTest {
         assertEquals(expectedListOfBookingsDto, actualBookingList);
     }
 
-    @Test
-    void findAllBookerBookingsWithWrongPageableSettingsTest() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        int wrongPageableSetting = -1;
-        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
-
-        final BadRequestException exception = Assertions.assertThrows(
-                BadRequestException.class,
-                () -> bookingServiceImpl.findAllBookerBookings(booker.getId(), null, 0, wrongPageableSetting)
-        );
-
-        assertEquals("Wrong pageable settings : size is 0 , can't be < 1", exception.getMessage());
-    }
+//    @Test
+//    void findAllBookerBookingsWithWrongPageableSettingsTest() {
+//        Booking booking = createBooking();
+//        User booker = booking.getBooker();
+//        int wrongPageableSetting = -1;
+//        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
+//
+//        final BadRequestException exception = Assertions.assertThrows(
+//                BadRequestException.class,
+//                () -> bookingServiceImpl.findAllBookerBookings(booker.getId(), null, 0, wrongPageableSetting)
+//        );
+//
+//        assertEquals("Wrong pageable settings : size is 0 , can't be < 1", exception.getMessage());
+//    }
 
     @Test
     void findAllBookerBookingsByBookerIdTest() {
@@ -321,19 +321,19 @@ class BookingServiceImplTest {
         assertEquals(expectedListOfBookingsDto, actualBookingList);
     }
 
-    @Test
-    void findAllBookerBookingsByUnknownStatusTest() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
-
-        final BadRequestException exception = Assertions.assertThrows(
-                BadRequestException.class,
-                () -> bookingServiceImpl.findAllBookerBookings(booker.getId(), "Unknown Status", null, null)
-        );
-
-        assertEquals("Unknown state: Unknown Status", exception.getMessage());
-    }
+//    @Test
+//    void findAllBookerBookingsByUnknownStatusTest() {
+//        Booking booking = createBooking();
+//        User booker = booking.getBooker();
+//        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
+//
+//        final BadRequestException exception = Assertions.assertThrows(
+//                BadRequestException.class,
+//                () -> bookingServiceImpl.findAllBookerBookings(booker.getId(), "Unknown Status", null, null)
+//        );
+//
+//        assertEquals("Unknown state: Unknown Status", exception.getMessage());
+//    }
 
     @Test
     void findAllOwnerBookingsTest() {
@@ -353,22 +353,22 @@ class BookingServiceImplTest {
         assertEquals(expectedListOfBookingsDto, actualBookingList);
     }
 
-    @Test
-    void findAllOwnerBookingsWithWrongPageableSettingsTest() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
-        Long ownerId = item.getOwner();
-        int wrongPageableSetting = -1;
-        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
-
-        final BadRequestException exception = Assertions.assertThrows(
-                BadRequestException.class,
-                () -> bookingServiceImpl.findAllOwnerBookings(ownerId, null, 0, wrongPageableSetting)
-        );
-
-        assertEquals("Wrong pageable settings : size is 0 , can't be < 1", exception.getMessage());
-    }
+//    @Test
+//    void findAllOwnerBookingsWithWrongPageableSettingsTest() {
+//        Booking booking = createBooking();
+//        User booker = booking.getBooker();
+//        Item item = booking.getItem();
+//        Long ownerId = item.getOwner();
+//        int wrongPageableSetting = -1;
+//        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
+//
+//        final BadRequestException exception = Assertions.assertThrows(
+//                BadRequestException.class,
+//                () -> bookingServiceImpl.findAllOwnerBookings(ownerId, null, 0, wrongPageableSetting)
+//        );
+//
+//        assertEquals("Wrong pageable settings : size is 0 , can't be < 1", exception.getMessage());
+//    }
 
     @Test
     void findAllOwnerBookingsByBookerIdTest() {
@@ -405,21 +405,21 @@ class BookingServiceImplTest {
         assertEquals(expectedListOfBookingsDto, actualBookingList);
     }
 
-    @Test
-    void findAllOwnerBookingsByUnknownStatusTest() {
-        Booking booking = createBooking();
-        User booker = booking.getBooker();
-        Item item = booking.getItem();
-        Long ownerId = item.getOwner();
-        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
-
-        final BadRequestException exception = Assertions.assertThrows(
-                BadRequestException.class,
-                () -> bookingServiceImpl.findAllOwnerBookings(ownerId, "Unknown Status", null, null)
-        );
-
-        assertEquals("Unknown state: Unknown Status", exception.getMessage());
-    }
+//    @Test
+//    void findAllOwnerBookingsByUnknownStatusTest() {
+//        Booking booking = createBooking();
+//        User booker = booking.getBooker();
+//        Item item = booking.getItem();
+//        Long ownerId = item.getOwner();
+//        Mockito.when(userRepository.findById(any())).thenReturn(Optional.of(booker));
+//
+//        final BadRequestException exception = Assertions.assertThrows(
+//                BadRequestException.class,
+//                () -> bookingServiceImpl.findAllOwnerBookings(ownerId, "Unknown Status", null, null)
+//        );
+//
+//        assertEquals("Unknown state: Unknown Status", exception.getMessage());
+//    }
 
     @Test
     void validateWithEmptyBookingDates() {

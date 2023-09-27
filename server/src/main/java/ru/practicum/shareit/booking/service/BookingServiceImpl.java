@@ -116,17 +116,17 @@ public class BookingServiceImpl implements BookingService {
             return convertToBookingDtoList(bookerBookings);
         }
 
-        if (from < 0) {
-            String message = "Wrong pageable settings : from is " + from + " , can't be < 0";
-            log.error(message);
-            throw new BadRequestException(message);
-        }
-
-        if (size < 1) {
-            String message = "Wrong pageable settings : size is " + from + " , can't be < 1";
-            log.error(message);
-            throw new BadRequestException(message);
-        }
+//        if (from < 0) {
+//            String message = "Wrong pageable settings : from is " + from + " , can't be < 0";
+//            log.error(message);
+//            throw new BadRequestException(message);
+//        }
+//
+//        if (size < 1) {
+//            String message = "Wrong pageable settings : size is " + from + " , can't be < 1";
+//            log.error(message);
+//            throw new BadRequestException(message);
+//        }
 
         if (from == 0) {
             bookerBookings = bookingRepository.findBookingByBookerIdPageable(PageRequest.of(from, size), bookerId).toList();
@@ -170,12 +170,7 @@ public class BookingServiceImpl implements BookingService {
                     bookerBookings = bookingRepository.findFutureBookingById(bookerId);
                     break;
             }
-        } else {
-            String message = "Unknown state: " + bookingStatus;
-            log.warn(message);
-            throw new BadRequestException(message);
         }
-
         return bookerBookings;
     }
 
@@ -201,17 +196,17 @@ public class BookingServiceImpl implements BookingService {
             return convertToBookingDtoList(ownerBookings);
         }
 
-        if (from < 0) {
-            String message = "Wrong pageable settings : from is " + from + " , can't be < 0";
-            log.error(message);
-            throw new BadRequestException(message);
-        }
-
-        if (size < 1) {
-            String message = "Wrong pageable settings : size is " + from + " , can't be < 1";
-            log.error(message);
-            throw new BadRequestException(message);
-        }
+//        if (from < 0) {
+//            String message = "Wrong pageable settings : from is " + from + " , can't be < 0";
+//            log.error(message);
+//            throw new BadRequestException(message);
+//        }
+//
+//        if (size < 1) {
+//            String message = "Wrong pageable settings : size is " + from + " , can't be < 1";
+//            log.error(message);
+//            throw new BadRequestException(message);
+//        }
 
         if (from == 0) {
             ownerBookings = bookingRepository.findBookingByOwnerIdPageable(PageRequest.of(from, size), ownerId).toList();
@@ -255,10 +250,6 @@ public class BookingServiceImpl implements BookingService {
                     bookerBookings = bookingRepository.findFutureBookingByOwnerId(ownerId);
                     break;
             }
-        } else {
-            String message = "Unknown state: " + bookingStatus;
-            log.warn(message);
-            throw new BadRequestException(message);
         }
         return bookerBookings;
     }
