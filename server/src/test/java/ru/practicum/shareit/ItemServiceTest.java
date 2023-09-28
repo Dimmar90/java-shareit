@@ -256,42 +256,6 @@ class ItemServiceTest {
         assertEquals(expectedSearchingItemsDtoList, actualListOfSearchingItemsDto);
     }
 
-//    @Test
-//    void validateItemWithNoAvailableTest() {
-//        Item item = createItem("itemName", "itemDescription", null);
-//
-//        final BadRequestException exception = Assertions.assertThrows(
-//                BadRequestException.class,
-//                () -> itemService.validateItem(item)
-//        );
-//
-//        assertEquals("Not found item available", exception.getMessage());
-//    }
-
-//    @Test
-//    void validateItemWithNoNameTest() {
-//        Item item = createItem("", "itemDescription", true);
-//
-//        final BadRequestException exception = Assertions.assertThrows(
-//                BadRequestException.class,
-//                () -> itemService.validateItem(item)
-//        );
-//
-//        assertEquals("Not found item name", exception.getMessage());
-//    }
-
-//    @Test
-//    void validateItemWithNoDescriptionTest() {
-//        Item item = createItem("itemName", null, true);
-//
-//        final BadRequestException exception = Assertions.assertThrows(
-//                BadRequestException.class,
-//                () -> itemService.validateItem(item)
-//        );
-//
-//        assertEquals("Not found item description", exception.getMessage());
-//    }
-
     @Test
     void addCommentTest() {
         Item item = createItem("itemName", "itemDescription", true);

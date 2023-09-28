@@ -1,6 +1,5 @@
 package ru.practicum.shareit;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -93,20 +91,6 @@ class RequestServiceTest {
 
         ItemRequest actualItemRequest = requestService.addItemRequest(requester.getId(), expectedItemRequest);
         assertEquals(expectedItemRequest, actualItemRequest);
-    }
-
-    @Test
-    void addItemRequestWithEmptyDescriptionTest() {
-        ItemRequest expectedItemRequest = createRequest();
-        expectedItemRequest.setDescription(null);
-        User requester = createRequester();
-
-        final BadRequestException exception = Assertions.assertThrows(
-                BadRequestException.class,
-                () -> requestService.addItemRequest(requester.getId(), expectedItemRequest)
-        );
-
-        assertEquals("Not find request description", exception.getMessage());
     }
 
     @Test

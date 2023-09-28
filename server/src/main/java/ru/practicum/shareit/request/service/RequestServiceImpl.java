@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exception.BadRequestException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.request.ItemRequest;
 import ru.practicum.shareit.request.dto.ItemRequestDto;
@@ -37,10 +36,6 @@ public class RequestServiceImpl implements RequestService {
 
     @Override
     public ItemRequest addItemRequest(Long requesterId, ItemRequest itemRequest) {
-        if (itemRequest.getDescription() == null) {
-            throw new BadRequestException("Not find request description");
-        }
-
         User requester = userRepository
                 .findById(requesterId)
                 .orElseThrow(() -> new NotFoundException("Не найден пользователь id: " + requesterId));

@@ -19,7 +19,7 @@ services:
       - db
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
-      #- TZ=Europe/Moscow
+     # - TZ=Europe/Moscow
       - DB_NAME=postgres
       - POSTGRES_USER=root
       - POSTGRES_PASSWORD=root
