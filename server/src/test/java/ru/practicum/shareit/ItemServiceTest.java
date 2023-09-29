@@ -285,21 +285,4 @@ class ItemServiceTest {
 
         assertEquals("User cant add comment", exception.getMessage());
     }
-
-//    @Test
-//    void addEmptyCommentTest() {
-//        Item item = createItem("itemName", "itemDescription", true);
-//        User owner = createOwner();
-//        Comment expectedComment = createComment();
-//        expectedComment.setText("");
-//        Mockito.when(userRepository.findById(item.getOwner())).thenReturn(Optional.of(owner));
-//        Mockito.when(itemRepository.findById(item.getId())).thenReturn(Optional.of(item));
-//
-//        final BadRequestException exception = Assertions.assertThrows(
-//                BadRequestException.class,
-//                () -> itemService.addComment(owner.getId(), item.getId(), expectedComment)
-//        );
-//
-//        assertEquals("Comment cant be empty", exception.getMessage());
-//    }
 }
